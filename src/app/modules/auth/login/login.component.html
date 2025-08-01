@@ -1,0 +1,76 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>SGI - Connexion</mat-card-title>
+      <mat-card-subtitle
+      >Vous pouvez vous connecter pour accéder à votre compte</mat-card-subtitle
+      >
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" required />
+          <mat-icon matSuffix>email</mat-icon>
+          <mat-error *ngIf="loginForm.get('email')?.errors?.required">
+            L'email est requis
+          </mat-error>
+          <mat-error *ngIf="loginForm.get('email')?.errors?.email">
+            Veuillez entrer un email valide
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Mot de passe</mat-label>
+          <input
+            matInput
+            formControlName="password"
+            required
+            [type]="hidePassword ? 'password' : 'text'"
+          />
+          <button
+            type="button"
+            mat-icon-button
+            matSuffix
+            (click)="hidePassword = !hidePassword"
+          >
+            <mat-icon>{{
+                hidePassword ? 'visibility_off' : 'visibility'
+              }}</mat-icon>
+          </button>
+          <mat-error *ngIf="loginForm.get('password')?.errors?.required">
+            Le mot de passe est requis
+          </mat-error>
+        </mat-form-field>
+
+        <div class="remember-forgot">
+          <mat-checkbox formControlName="rememberMe"
+          >Se souvenir de moi</mat-checkbox
+          >
+          <a routerLink="/auth/forgot-password" class="forgot-password"
+          >Mot de passe oublié ?</a
+          >
+        </div>
+
+        <button
+          mat-raised-button
+          color="primary"
+          class="full-width"
+          type="submit"
+          [disabled]="loginForm.invalid || isLoading"
+        >
+          <span *ngIf="!isLoading">Se connecter</span>
+          <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+        </button>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <div class="register-link">
+        <span>Vous n'avez pas de compte ?</span>
+        <a routerLink="/auth/register">Créer un compte</a>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+</div>

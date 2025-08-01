@@ -1,0 +1,100 @@
+<div class="incident-create-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Création d'un nouveau ticket</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="incidentForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Titre</mat-label>
+          <input matInput formControlName="title" required maxlength="100" />
+          <mat-error *ngIf="incidentForm.get('title')?.errors?.required">
+            Le titre est requis
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea
+            matInput
+            formControlName="description"
+            required
+            rows="5"
+          ></textarea>
+          <mat-error *ngIf="incidentForm.get('description')?.errors?.required">
+            La description est requise
+          </mat-error>
+        </mat-form-field>
+
+        <div class="row">
+          <mat-form-field appearance="outline">
+            <mat-label>Type d'incident</mat-label>
+            <mat-select formControlName="type" required>
+              <mat-option *ngFor="let type of incidentTypes" [value]="type">
+                {{ type }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="incidentForm.get('type')?.errors?.required">
+              Le type est requis
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Priorité</mat-label>
+            <mat-select formControlName="priority" required>
+              <mat-option value="CRITICAL">Critique</mat-option>
+              <mat-option value="HIGH">Élevée</mat-option>
+              <mat-option value="MEDIUM">Moyenne</mat-option>
+              <mat-option value="LOW">Faible</mat-option>
+            </mat-select>
+            <mat-error *ngIf="incidentForm.get('priority')?.errors?.required">
+              La priorité est requise
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="file-upload">
+          <input
+            type="file"
+            #fileInput
+            style="display: none"
+            (change)="onFileSelected($event)"
+            multiple
+          />
+          <button
+            type="button"
+            mat-stroked-button
+            (click)="fileInput.click()"
+          >
+            <mat-icon>attach_file</mat-icon>
+            Joindre des fichiers
+          </button>
+          <span *ngIf="selectedFiles.length > 0">
+            {{ selectedFiles.length }} fichier(s) sélectionné(s)
+          </span>
+        </div>
+
+        <div class="form-actions">
+          <button
+            mat-raised-button
+            type="button"
+            routerLink="/incidents"
+            class="cancel-button"
+          >
+            Annuler
+          </button>
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="incidentForm.invalid || isLoading"
+          >
+            <span *ngIf="!isLoading">Soumettre le ticket</span>
+            <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

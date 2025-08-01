@@ -1,0 +1,73 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav
+    #sidenav
+    mode="side"
+    [opened]="isSidenavOpen"
+    [fixedInViewport]="true"
+    fixedTopGap="64"
+  >
+    <mat-nav-list>
+      <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link">
+        <mat-icon>dashboard</mat-icon>
+        <span>Tableau de bord</span>
+      </a>
+
+      <a mat-list-item routerLink="/incidents" routerLinkActive="active-link">
+        <mat-icon>bug_report</mat-icon>
+        <span>Incidents</span>
+      </a>
+
+      <a
+        mat-list-item
+        routerLink="/sla-monitoring"
+        routerLinkActive="active-link"
+        *ngIf="authService.hasRole('MANAGER')"
+      >
+        <mat-icon>assessment</mat-icon>
+        <span>Suivi SLA</span>
+      </a>
+
+      <a
+        mat-list-item
+        routerLink="/admin/users"
+        routerLinkActive="active-link"
+        *ngIf="authService.hasRole('ADMIN')"
+      >
+        <mat-icon>people</mat-icon>
+        <span>Utilisateurs</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar color="primary" class="toolbar">
+      <button
+        mat-icon-button
+        (click)="toggleSidenav()"
+        class="sidenav-toggle"
+        aria-label="Toggle sidenav"
+      >
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <span class="app-title">SGI</span>
+
+      <span class="spacer"></span>
+
+      <button mat-button [matMenuTriggerFor]="userMenu">
+        <mat-icon>account_circle</mat-icon>
+        {{ currentUser?.name }}
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          Déconnexion
+        </button>
+      </mat-menu>
+    </mat-toolbar>
+
+    <main class="main-content">
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

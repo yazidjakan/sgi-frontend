@@ -1,1 +1,225 @@
-/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/theming';
+@include mat-core();
+
+$primary: mat-palette($mat-indigo);
+$accent: mat-palette($mat-pink, A200, A100, A400);
+$warn: mat-palette($mat-red);
+$theme: mat-light-theme($primary, $accent, $warn);
+
+@include angular-material-theme($theme);
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.full-width {
+  width: 100%;
+}
+
+// Priority badges
+.priority-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+
+  &.critical {
+    background-color: #ffcdd2;
+    color: #c62828;
+  }
+
+  &.high {
+    background-color: #ffccbc;
+    color: #e65100;
+  }
+
+  &.medium {
+    background-color: #fff9c4;
+    color: #f57f17;
+  }
+
+  &.low {
+    background-color: #c8e6c9;
+    color: #388e3c;
+  }
+}
+
+// Status badges
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+
+  &.open {
+    background-color: #bbdefb;
+    color: #1565c0;
+  }
+
+  &.in_progress {
+    background-color: #b3e5fc;
+    color: #0288d1;
+  }
+
+  &.resolved {
+    background-color: #c8e6c9;
+    color: #388e3c;
+  }
+
+  &.closed {
+    background-color: #e0e0e0;
+    color: #616161;
+  }
+}
+
+// Layout styles
+.sidenav-container {
+  height: 100vh;
+}
+
+.sidenav {
+  width: 240px;
+  box-shadow: 3px 0 6px rgba(0, 0, 0, 0.24);
+}
+
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.main-content {
+  padding: 24px;
+}
+
+// Active link style
+.active-link {
+  background-color: rgba(0, 0, 0, 0.04);
+  font-weight: 500;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: mat-color($primary);
+  }
+}
+
+// KPI cards
+.kpi-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  text-align: center;
+
+  .kpi-value {
+    font-size: 2.5rem;
+    font-weight: 500;
+    margin: 8px 0;
+  }
+
+  .kpi-subtext {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 0.875rem;
+  }
+}
+
+// Charts row
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  @media (max-width: 959px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// High risk table
+.high-risk {
+  background-color: #ffebee;
+}
+
+// Form actions
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 24px;
+
+  .cancel-button {
+    margin-right: auto;
+  }
+}
+
+// File upload
+.file-upload {
+  margin: 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+// Login container
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+
+  .login-card {
+    width: 100%;
+    max-width: 450px;
+    padding: 24px;
+
+    .remember-forgot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 16px 0;
+
+      .forgot-password {
+        text-decoration: none;
+        color: mat-color($primary);
+      }
+    }
+
+    .register-link {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+    }
+  }
+}
+
+// Snackbar styles
+.error-snackbar {
+  background-color: mat-color($warn);
+  color: white;
+}
+
+.success-snackbar {
+  background-color: #4caf50;
+  color: white;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
