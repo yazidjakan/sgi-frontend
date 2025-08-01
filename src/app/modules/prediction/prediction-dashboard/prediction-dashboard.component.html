@@ -1,0 +1,96 @@
+<!-- prediction-dashboard.component.html -->
+<div class="prediction-container">
+  <h1>Analyse prédictive des incidents</h1>
+
+  <div class="prediction-cards">
+    <mat-card class="prediction-card">
+      <mat-card-header>
+        <mat-card-title>Risque global</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="risk-gauge">
+          <canvas baseChart
+                  [data]="riskGaugeData"
+                  [type]="'doughnut'"
+                  [options]="riskGaugeOptions">
+          </canvas>
+          <div class="gauge-value">{{ overallRisk | percent: '1.0-1' }}</div>
+        </div>
+        <div class="risk-description">
+          <p *ngIf="overallRisk > 0.7" class="high-risk">
+            <mat-icon>warning</mat-icon> Risque élevé de non-conformité SLA
+          </p>
+          <p *ngIf="overallRisk <= 0.7 && overallRisk > 0.4" class="medium-risk">
+            <mat-icon>info</mat-icon> Risque modéré de non-conformité SLA
+          </p>
+          <p *ngIf="overallRisk <= 0.4" class="low-risk">
+            <mat-icon>check_circle</mat-icon> Faible risque de non-conformité SLA
+          </p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="prediction-card">
+      <mat-card-header>
+        <mat-card-title>Tendance des incidents</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <canvas baseChart
+                [data]="trendChartData"
+                [options]="trendChartOptions"
+                [type]="'line'">
+        </canvas>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-card class="heatmap-card">
+    <mat-card-header>
+      <mat-card-title>Heatmap des risques par période</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="heatmap-container">
+        <canvas baseChart
+                [data]="heatmapData"
+                [options]="heatmapOptions"
+                [type]="'bar'">
+        </canvas>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="recommendations-card">
+    <mat-card-header>
+      <mat-card-title>Actions recommandées</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-accordion>
+        <mat-expansion-panel *ngFor="let recommendation of recommendations">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{ recommendation.category }}
+            </mat-panel-title>
+            <mat-panel-description>
+              {{ recommendation.priority }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <h4>Description:</h4>
+          <p>{{ recommendation.description }}</p>
+
+          <h4>Actions:</h4>
+          <ul>
+            <li *ngFor="let action of recommendation.actions">{{ action }}</li>
+          </ul>
+
+          <h4>Impact estimé:</h4>
+          <mat-progress-bar
+            mode="determinate"
+            [value]="recommendation.impact * 100"
+            color="primary">
+          </mat-progress-bar>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-card-content>
+  </mat-card>
+</div>

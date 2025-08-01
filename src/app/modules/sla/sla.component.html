@@ -1,0 +1,104 @@
+<!-- sla-dashboard.component.html -->
+<div class="sla-container">
+  <h1>Suivi des SLA et indicateurs clés</h1>
+
+  <div class="sla-cards">
+    <mat-card class="sla-card">
+      <mat-card-header>
+        <mat-card-title>Conformité globale SLA</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="gauge-container">
+          <canvas baseChart
+                  [data]="gaugeChartData"
+                  [type]="'doughnut'"
+                  [options]="gaugeChartOptions">
+          </canvas>
+          <div class="gauge-value">{{ slaMetrics?.complianceRate }}%</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="sla-card">
+      <mat-card-header>
+        <mat-card-title>Répartition des incidents</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <canvas baseChart
+                [data]="incidentDistributionData"
+                [labels]="incidentDistributionLabels"
+                [type]="'pie'"
+                [options]="pieChartOptions">
+        </canvas>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-card class="sla-table-card">
+    <mat-card-header>
+      <mat-card-title>Détails par type d'incident</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <table mat-table [dataSource]="slaDefinitions">
+        <!-- Type Column -->
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef>Type d'incident</th>
+          <td mat-cell *matCellDef="let sla">{{ sla.incidentType }}</td>
+        </ng-container>
+
+        <!-- Response Time Column -->
+        <ng-container matColumnDef="responseTime">
+          <th mat-header-cell *matHeaderCellDef>Temps de réponse max</th>
+          <td mat-cell *matCellDef="let sla">{{ sla.maxResponseTime }}h</td>
+        </ng-container>
+
+        <!-- Resolution Time Column -->
+        <ng-container matColumnDef="resolutionTime">
+          <th mat-header-cell *matHeaderCellDef>Temps de résolution max</th>
+          <td mat-cell *matCellDef="let sla">{{ sla.maxResolutionTime }}h</td>
+        </ng-container>
+
+        <!-- Compliance Column -->
+        <ng-container matColumnDef="compliance">
+          <th mat-header-cell *matHeaderCellDef>Taux de conformité</th>
+          <td mat-cell *matCellDef="let sla">
+            <mat-progress-bar
+              mode="determinate"
+              [value]="sla.complianceRate"
+              [color]="sla.complianceRate > 90 ? 'primary' : (sla.complianceRate > 70 ? 'accent' : 'warn')">
+            </mat-progress-bar>
+            {{ sla.complianceRate }}%
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="slaColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: slaColumns"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="prediction-card">
+    <mat-card-header>
+      <mat-card-title>Prédictions de risque SLA</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="prediction-grid">
+        <div *ngFor="let prediction of slaPredictions" class="prediction-item">
+          <div class="prediction-header">
+            <h3>{{ prediction.incidentType }}</h3>
+            <span class="risk-badge" [ngClass]="getRiskLevel(prediction.riskScore)">
+              {{ prediction.riskScore | percent: '1.0-1' }}
+            </span>
+          </div>
+          <p>{{ prediction.description }}</p>
+          <div class="recommendations">
+            <h4>Recommandations:</h4>
+            <ul>
+              <li *ngFor="let rec of prediction.recommendations">{{ rec }}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
