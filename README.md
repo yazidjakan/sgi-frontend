@@ -247,10 +247,6 @@ sgi-frontend/
 - `POST /api/predict` - Faire une prédiction
 - `GET /api/model/info` - Informations modèle
 
-## 📸 Captures d'écran
-
-### Page de connexion
-![Login](screenshots/login.png)
 
 ## 🤝 Contribution
 
