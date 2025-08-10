@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { 
@@ -10,7 +10,6 @@ import {
   StatutIncident,
   NiveauPriorite 
 } from '../models/incident.model';
-import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,8 +19,7 @@ export class IncidentService {
   private incidentUrl = `${this.apiUrl}/v1/incidents`;
 
   constructor(
-    private http: HttpClient,
-    private authService: AuthService
+    private http: HttpClient
   ) {}
 
   // Get all incidents
@@ -36,8 +34,7 @@ export class IncidentService {
 
   // Create new incident
   createIncident(incident: Incident): Observable<Incident> {
-    const headers = new HttpHeaders().set('X-User-ID', this.authService.currentUserValue?.id?.toString() || '');
-    return this.http.post<Incident>(this.incidentUrl, incident, { headers });
+    return this.http.post<Incident>(this.incidentUrl, incident);
   }
 
   // Update incident
@@ -77,8 +74,10 @@ export class IncidentService {
 
   // Add comment to incident
   addComment(incidentId: number, content: string): Observable<Commentaire> {
-    const headers = new HttpHeaders().set('X-User-ID', this.authService.currentUserValue?.id?.toString() || '');
-    return this.http.post<Commentaire>(`${this.incidentUrl}/${incidentId}/comments?content=${encodeURIComponent(content)}`, {}, { headers });
+    return this.http.post<Commentaire>(
+      `${this.incidentUrl}/${incidentId}/comments`,
+      { content }
+    );
   }
 
   // Get comments for incident
@@ -90,9 +89,8 @@ export class IncidentService {
   addAttachment(incidentId: number, file: File): Observable<Attachment> {
     const formData = new FormData();
     formData.append('file', file);
-    
-    const headers = new HttpHeaders().set('X-User-ID', this.authService.currentUserValue?.id?.toString() || '');
-    return this.http.post<Attachment>(`${this.incidentUrl}/${incidentId}/attachments`, formData, { headers });
+
+    return this.http.post<Attachment>(`${this.incidentUrl}/${incidentId}/attachments`, formData);
   }
 
   // Get attachments for incident
@@ -106,18 +104,13 @@ export class IncidentService {
   }
 
   // Export incidents to CSV
-  exportCsv(): Observable<string> {
-    return this.http.get<string>(`${this.incidentUrl}/export-csv`);
-  }
-
-  // Download CSV file
-  downloadCsv(): Observable<Blob> {
-    return this.http.get(`${this.incidentUrl}/download-csv`, { responseType: 'blob' });
+  exportCsv(): Observable<Blob> {
+    return this.http.get(`${this.incidentUrl}/export-csv`, { responseType: 'blob' });
   }
 
   // Get resolved incidents for AI
   getResolvedForAI(): Observable<Incident[]> {
-    return this.http.get<Incident[]>(`${this.incidentUrl}/api/incidents/resolved-for-ai`);
+    return this.http.get<Incident[]>(`${this.incidentUrl}/resolved-for-ai`);
   }
 
   // Get incident statistics

@@ -56,6 +56,7 @@ import { RoleGuard } from './guards/role.guard';
 
 // Interceptors
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { JwtInterceptor } from './interceptors/jwt.interceptor';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -193,6 +194,11 @@ const routes: Routes = [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: JwtInterceptor,
       multi: true
     }
   ],
