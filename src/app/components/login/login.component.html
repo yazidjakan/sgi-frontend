@@ -1,0 +1,64 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>Bienvenue</h1>
+      <p>Vous pouvez vous connecter pour accéder à votre compte</p>
+      <div class="sgi-logo-large">SGI</div>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <h2>
+        <mat-icon>person</mat-icon>
+        Se connecter
+      </h2>
+      
+      <p class="register-link">
+        <a routerLink="/register">Ou créez un nouveau compte</a>
+      </p>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Nom d'utilisateur ou email</mat-label>
+        <input matInput formControlName="email" type="email" placeholder="votre@email.com">
+        <mat-error *ngIf="loginForm.get('email')?.invalid">
+          {{ getErrorMessage('email') }}
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Mot de passe</mat-label>
+        <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
+        <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+          <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+        <mat-error *ngIf="loginForm.get('password')?.invalid">
+          {{ getErrorMessage('password') }}
+        </mat-error>
+      </mat-form-field>
+
+      <div class="form-options">
+        <mat-checkbox formControlName="rememberMe">
+          Se souvenir de moi
+        </mat-checkbox>
+        
+        <a routerLink="/forgot-password" class="forgot-password">
+          Mot de passe oublié?
+        </a>
+      </div>
+
+      <button mat-raised-button 
+              color="primary" 
+              type="submit" 
+              class="login-button"
+              [disabled]="loginForm.invalid || loading">
+        <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+        <span *ngIf="!loading">Continue</span>
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <a href="/terms">Terms of Use</a>
+      <span class="separator">|</span>
+      <a href="/privacy">Privacy Policy</a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,143 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.login-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.login-header {
+  margin-bottom: 30px;
+}
+
+.login-header h1 {
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 1.8rem;
+  font-weight: 500;
+}
+
+.login-header p {
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.sgi-logo-large {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--sgi-primary);
+  margin: 20px 0;
+}
+
+.login-form {
+  text-align: left;
+}
+
+.login-form h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+}
+
+.register-link {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.register-link a {
+  color: var(--sgi-primary);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.forgot-password {
+  color: var(--sgi-primary);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+.login-button {
+  width: 100%;
+  height: 48px;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top: 20px;
+}
+
+.login-footer {
+  margin-top: 30px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.login-footer a {
+  color: #666;
+  text-decoration: none;
+}
+
+.login-footer a:hover {
+  color: var(--sgi-primary);
+}
+
+.separator {
+  margin: 0 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 20px;
+    margin: 10px;
+  }
+  
+  .form-options {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .login-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .sgi-logo-large {
+    font-size: 2rem;
+  }
+}

@@ -1,0 +1,296 @@
+<div class="predictions-container">
+  <div class="predictions-header">
+    <h2>Prédictions IA - Violations SLA</h2>
+    <div class="header-actions">
+      <button mat-icon-button (click)="refreshPredictions()" matTooltip="Actualiser">
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <button mat-raised-button color="accent" (click)="exportPredictions()" matTooltip="Exporter les prédictions">
+        <mat-icon>download</mat-icon>
+        Exporter
+      </button>
+      <button mat-raised-button color="warn" (click)="retrainModel()" [disabled]="loading" matTooltip="Réentraîner le modèle">
+        <mat-icon>psychology</mat-icon>
+        {{ loading ? 'Entraînement...' : 'Réentraîner' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Entraînement du modèle en cours...</p>
+  </div>
+
+  <!-- Predictions Content -->
+  <div class="predictions-content" *ngIf="!loading">
+    <!-- Model Info Cards -->
+    <div class="model-info-section">
+      <mat-card class="model-card" *ngIf="modelInfo">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>psychology</mat-icon>
+            Informations du Modèle
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="model-details">
+            <div class="model-item">
+              <span class="label">Type:</span>
+              <span class="value">{{ modelInfo.model_type }}</span>
+            </div>
+            <div class="model-item" *ngIf="modelInfo.accuracy">
+              <span class="label">Précision:</span>
+              <span class="value" [style.color]="getModelAccuracyColor(modelInfo.accuracy)">
+                <mat-icon>{{ getModelAccuracyIcon(modelInfo.accuracy) }}</mat-icon>
+                {{ modelInfo.accuracy }}%
+              </span>
+            </div>
+            <div class="model-item" *ngIf="modelInfo.version">
+              <span class="label">Version:</span>
+              <span class="value">{{ modelInfo.version }}</span>
+            </div>
+            <div class="model-item" *ngIf="modelInfo.last_trained">
+              <span class="label">Dernier entraînement:</span>
+              <span class="value">{{ modelInfo.last_trained | date:'short' }}</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="training-card" *ngIf="trainingDataInfo">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>dataset</mat-icon>
+            Données d'Entraînement
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="training-details">
+            <div class="training-item">
+              <span class="label">Incidents totaux:</span>
+              <span class="value">{{ trainingDataInfo.total_incidents }}</span>
+            </div>
+            <div class="training-item" *ngIf="trainingDataInfo.training_date">
+              <span class="label">Date d'entraînement:</span>
+              <span class="value">{{ trainingDataInfo.training_date | date:'short' }}</span>
+            </div>
+            <div class="training-item" *ngIf="trainingDataInfo.features_count">
+              <span class="label">Nombre de features:</span>
+              <span class="value">{{ trainingDataInfo.features_count }}</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Prediction Form and Result -->
+    <div class="prediction-section">
+      <mat-card class="prediction-form-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>analytics</mat-icon>
+            Nouvelle Prédiction
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <form [formGroup]="predictionForm" (ngSubmit)="makePrediction()">
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Type d'incident</mat-label>
+                <mat-select formControlName="type_incident" (selectionChange)="onIncidentTypeChange()">
+                  <mat-option *ngFor="let type of incidentTypes" [value]="type">
+                    <div class="type-option">
+                      <mat-icon [style.color]="getIncidentTypeColor(type)">
+                        {{ getIncidentTypeIcon(type) }}
+                      </mat-icon>
+                      <span>{{ type }}</span>
+                    </div>
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="predictionForm.get('type_incident')?.hasError('required')">
+                  Type d'incident requis
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Priorité</mat-label>
+                <mat-select formControlName="priorite">
+                  <mat-option *ngFor="let priority of priorityLevels" [value]="priority">
+                    <div class="priority-option">
+                      <mat-icon [style.color]="getPriorityColor(+priority)">
+                        {{ priority === 4 ? 'priority_high' : priority === 3 ? 'priority_high' : priority === 2 ? 'remove' : 'low_priority' }}
+                      </mat-icon>
+                      <span>{{ getPriorityLabel(+priority) }}</span>
+                    </div>
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="predictionForm.get('priorite')?.hasError('required')">
+                  Priorité requise
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Temps de réponse (minutes)</mat-label>
+                <input matInput formControlName="response_time" type="number" min="0">
+                <mat-error *ngIf="predictionForm.get('response_time')?.hasError('required')">
+                  Temps de réponse requis
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Temps de résolution (minutes)</mat-label>
+                <input matInput formControlName="resolution_time" type="number" min="0">
+                <mat-error *ngIf="predictionForm.get('resolution_time')?.hasError('required')">
+                  Temps de résolution requis
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>SLA - Temps de réponse max (minutes)</mat-label>
+                <input matInput formControlName="max_response" type="number" min="1">
+                <mat-error *ngIf="predictionForm.get('max_response')?.hasError('required')">
+                  Temps de réponse max requis
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>SLA - Temps de résolution max (minutes)</mat-label>
+                <input matInput formControlName="max_resolution" type="number" min="1">
+                <mat-error *ngIf="predictionForm.get('max_resolution')?.hasError('required')">
+                  Temps de résolution max requis
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-actions">
+              <button mat-raised-button 
+                      color="primary" 
+                      type="submit" 
+                      [disabled]="predictionForm.invalid || predicting">
+                <mat-icon>psychology</mat-icon>
+                {{ predicting ? 'Prédiction...' : 'Prédire' }}
+              </button>
+
+              <button mat-raised-button 
+                      color="accent" 
+                      type="button" 
+                      (click)="clearForm()">
+                <mat-icon>clear</mat-icon>
+                Effacer
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Prediction Result -->
+      <mat-card class="prediction-result-card" *ngIf="predictionResult">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>analytics</mat-icon>
+            Résultat de la Prédiction
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="prediction-result">
+            <div class="result-main">
+              <div class="result-icon" [style.color]="getViolationColor(predictionResult.prediction)">
+                <mat-icon>{{ getViolationIcon(predictionResult.prediction) }}</mat-icon>
+              </div>
+              <div class="result-details">
+                <h3 [style.color]="getViolationColor(predictionResult.prediction)">
+                  {{ getViolationLabel(predictionResult.prediction) }}
+                </h3>
+                <p class="result-description">
+                  {{ predictionResult.recommendation }}
+                </p>
+              </div>
+            </div>
+
+            <div class="result-metrics" *ngIf="predictionResult.violation_probability">
+              <div class="metric-item">
+                <span class="metric-label">Probabilité de violation:</span>
+                <span class="metric-value" [style.color]="getViolationColor(predictionResult.prediction)">
+                  {{ predictionResult.violation_probability }}%
+                </span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Prediction History -->
+    <mat-card class="history-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>history</mat-icon>
+          Historique des Prédictions
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="history-list" *ngIf="predictionHistory.length > 0; else emptyHistory">
+          <div class="history-item" *ngFor="let prediction of predictionHistory">
+            <div class="history-info">
+              <div class="history-header">
+                <div class="incident-type">
+                  <mat-icon [style.color]="getIncidentTypeColor(prediction.input.type_incident)">
+                    {{ getIncidentTypeIcon(prediction.input.type_incident) }}
+                  </mat-icon>
+                  <span>{{ prediction.input.type_incident }}</span>
+                </div>
+                <div class="prediction-result" [style.color]="getViolationColor(prediction.result.prediction)">
+                  <mat-icon>{{ getViolationIcon(prediction.result.prediction) }}</mat-icon>
+                  <span>{{ getViolationLabel(prediction.result.prediction) }}</span>
+                </div>
+              </div>
+              
+              <div class="history-details">
+                <div class="detail-item">
+                  <span class="label">Priorité:</span>
+                  <span class="value" [style.color]="getPriorityColor(prediction.input.priorite)">
+                    {{ getPriorityLabel(prediction.input.priorite) }}
+                  </span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Temps de réponse:</span>
+                  <span class="value">{{ formatTime(prediction.input.response_time) }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Temps de résolution:</span>
+                  <span class="value">{{ formatTime(prediction.input.resolution_time) }}</span>
+                </div>
+                <div class="detail-item" *ngIf="prediction.result.violation_probability">
+                  <span class="label">Probabilité:</span>
+                  <span class="value" [style.color]="getViolationColor(prediction.result.prediction)">
+                    {{ prediction.result.violation_probability }}%
+                  </span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Date:</span>
+                  <span class="value">{{ prediction.timestamp | date:'short' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #emptyHistory>
+          <div class="empty-history">
+            <mat-icon>analytics</mat-icon>
+            <h3>Aucune prédiction</h3>
+            <p>Effectuez votre première prédiction pour voir l'historique</p>
+          </div>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

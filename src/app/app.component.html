@@ -1,0 +1,125 @@
+<mat-toolbar color="primary" class="sgi-toolbar">
+  <div class="toolbar-content">
+    <div class="logo-section">
+      <span class="sgi-logo">SGI</span>
+      <span class="logo-subtitle">Système de Gestion des Incidents</span>
+    </div>
+    
+    <div class="user-section" *ngIf="isAuthenticated()">
+      <span class="welcome-text">Bienvenue, {{ currentUser?.username }}</span>
+      <button mat-icon-button [matMenuTriggerFor]="userMenu">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span>Déconnexion</span>
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+</mat-toolbar>
+
+<div class="app-container">
+  <mat-sidenav-container class="sidenav-container">
+    <!-- Sidebar Navigation -->
+    <mat-sidenav #drawer class="sidenav" fixedInViewport
+                 [attr.role]="(isAuthenticated() ? 'navigation' : '')"
+                 [mode]="'side'"
+                 [opened]="isAuthenticated()">
+      
+      <mat-nav-list>
+        <!-- Accueil -->
+        <a mat-list-item routerLink="/dashboard" routerLinkActive="active">
+          <mat-icon>home</mat-icon>
+          <span>Accueil</span>
+        </a>
+
+        <!-- Mes tickets (pour tous les utilisateurs) -->
+        <a mat-list-item routerLink="/tickets" routerLinkActive="active">
+          <mat-icon>assignment</mat-icon>
+          <span>Mes tickets</span>
+        </a>
+
+        <!-- Créer un ticket -->
+        <a mat-list-item routerLink="/tickets/create" routerLinkActive="active">
+          <mat-icon>add_circle</mat-icon>
+          <span>Créer un ticket</span>
+        </a>
+
+        <!-- Menu Manager -->
+        <ng-container *ngIf="isManager()">
+          <mat-divider></mat-divider>
+          <h3 mat-subheader>Gestion</h3>
+          
+          <a mat-list-item routerLink="/sla" routerLinkActive="active">
+            <mat-icon>schedule</mat-icon>
+            <span>Suivi SLA</span>
+          </a>
+          
+          <a mat-list-item routerLink="/performance" routerLinkActive="active">
+            <mat-icon>analytics</mat-icon>
+            <span>Performances</span>
+          </a>
+          
+          <a mat-list-item routerLink="/reports" routerLinkActive="active">
+            <mat-icon>assessment</mat-icon>
+            <span>Rapports</span>
+          </a>
+          
+          <a mat-list-item routerLink="/technicians" routerLinkActive="active">
+            <mat-icon>people</mat-icon>
+            <span>Techniciens</span>
+          </a>
+        </ng-container>
+
+        <!-- Menu Admin -->
+        <ng-container *ngIf="isAdmin()">
+          <mat-divider></mat-divider>
+          <h3 mat-subheader>Administration</h3>
+          
+          <a mat-list-item routerLink="/users" routerLinkActive="active">
+            <mat-icon>admin_panel_settings</mat-icon>
+            <span>Gestion utilisateurs</span>
+          </a>
+          
+          <a mat-list-item routerLink="/system" routerLinkActive="active">
+            <mat-icon>settings</mat-icon>
+            <span>Configuration</span>
+          </a>
+        </ng-container>
+
+        <!-- Menu Technicien -->
+        <ng-container *ngIf="isTechnician()">
+          <mat-divider></mat-divider>
+          <h3 mat-subheader>Traitement</h3>
+          
+          <a mat-list-item routerLink="/assigned-tickets" routerLinkActive="active">
+            <mat-icon>work</mat-icon>
+            <span>Tickets assignés</span>
+          </a>
+        </ng-container>
+
+        <!-- Recherche -->
+        <mat-divider></mat-divider>
+        <a mat-list-item routerLink="/search" routerLinkActive="active">
+          <mat-icon>search</mat-icon>
+          <span>Recherche</span>
+        </a>
+
+        <!-- Aide -->
+        <a mat-list-item routerLink="/help" routerLinkActive="active">
+          <mat-icon>help</mat-icon>
+          <span>Aide</span>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <!-- Main Content -->
+    <mat-sidenav-content class="sidenav-content">
+      <div class="content-container">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

@@ -1,0 +1,199 @@
+<div class="kanban-container">
+  <div class="kanban-header">
+    <h2>Tableau Kanban - Gestion des Incidents</h2>
+    <button mat-raised-button color="primary" (click)="createTicket()">
+      <mat-icon>add</mat-icon>
+      Créer un ticket
+    </button>
+  </div>
+
+  <div class="kanban-board" *ngIf="!loading; else loadingTemplate">
+    <!-- Backlog -->
+    <div class="kanban-column">
+      <div class="column-header backlog">
+        <h3>Backlog</h3>
+        <span class="count">{{ backlog.length }}</span>
+      </div>
+      <div class="column-content" 
+           cdkDropList 
+           id="backlog"
+           [cdkDropListData]="backlog"
+           [cdkDropListConnectedTo]="['ouvert', 'enCours', 'aValider', 'resolu']"
+           (cdkDropListDropped)="onDrop($event)">
+        <div class="incident-card" 
+             *ngFor="let incident of backlog" 
+             cdkDrag>
+          <div class="card-header">
+            <span class="priority-badge" 
+                  [style.background-color]="getPriorityColor(incident.priority)">
+              {{ getPriorityLabel(incident.priority) }}
+            </span>
+            <span class="incident-id">#{{ incident.id }}</span>
+          </div>
+          <div class="card-title">{{ incident.title }}</div>
+          <div class="card-description" *ngIf="incident.description">
+            {{ incident.description | slice:0:100 }}{{ incident.description.length > 100 ? '...' : '' }}
+          </div>
+          <div class="card-footer">
+            <span class="date">{{ formatDate(incident.creationDate) }}</span>
+            <span class="type">{{ incident.incidentType }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ouvert -->
+    <div class="kanban-column">
+      <div class="column-header ouvert">
+        <h3>Ouvert</h3>
+        <span class="count">{{ ouvert.length }}</span>
+      </div>
+      <div class="column-content" 
+           cdkDropList 
+           id="ouvert"
+           [cdkDropListData]="ouvert"
+           [cdkDropListConnectedTo]="['backlog', 'enCours', 'aValider', 'resolu']"
+           (cdkDropListDropped)="onDrop($event)">
+        <div class="incident-card" 
+             *ngFor="let incident of ouvert" 
+             cdkDrag>
+          <div class="card-header">
+            <span class="priority-badge" 
+                  [style.background-color]="getPriorityColor(incident.priority)">
+              {{ getPriorityLabel(incident.priority) }}
+            </span>
+            <span class="incident-id">#{{ incident.id }}</span>
+          </div>
+          <div class="card-title">{{ incident.title }}</div>
+          <div class="card-description" *ngIf="incident.description">
+            {{ incident.description | slice:0:100 }}{{ incident.description.length > 100 ? '...' : '' }}
+          </div>
+          <div class="card-footer">
+            <span class="date">{{ formatDate(incident.creationDate) }}</span>
+            <span class="type">{{ incident.incidentType }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- En cours -->
+    <div class="kanban-column">
+      <div class="column-header en-cours">
+        <h3>En cours</h3>
+        <span class="count">{{ enCours.length }}</span>
+      </div>
+      <div class="column-content" 
+           cdkDropList 
+           id="enCours"
+           [cdkDropListData]="enCours"
+           [cdkDropListConnectedTo]="['backlog', 'ouvert', 'aValider', 'resolu']"
+           (cdkDropListDropped)="onDrop($event)">
+        <div class="incident-card" 
+             *ngFor="let incident of enCours" 
+             cdkDrag>
+          <div class="card-header">
+            <span class="priority-badge" 
+                  [style.background-color]="getPriorityColor(incident.priority)">
+              {{ getPriorityLabel(incident.priority) }}
+            </span>
+            <span class="incident-id">#{{ incident.id }}</span>
+          </div>
+          <div class="card-title">{{ incident.title }}</div>
+          <div class="card-description" *ngIf="incident.description">
+            {{ incident.description | slice:0:100 }}{{ incident.description.length > 100 ? '...' : '' }}
+          </div>
+          <div class="card-footer">
+            <span class="date">{{ formatDate(incident.creationDate) }}</span>
+            <span class="type">{{ incident.incidentType }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- À valider -->
+    <div class="kanban-column">
+      <div class="column-header a-valider">
+        <h3>À valider</h3>
+        <span class="count">{{ aValider.length }}</span>
+      </div>
+      <div class="column-content" 
+           cdkDropList 
+           id="aValider"
+           [cdkDropListData]="aValider"
+           [cdkDropListConnectedTo]="['backlog', 'ouvert', 'enCours', 'resolu']"
+           (cdkDropListDropped)="onDrop($event)">
+        <div class="incident-card" 
+             *ngFor="let incident of aValider" 
+             cdkDrag>
+          <div class="card-header">
+            <span class="priority-badge" 
+                  [style.background-color]="getPriorityColor(incident.priority)">
+              {{ getPriorityLabel(incident.priority) }}
+            </span>
+            <span class="incident-id">#{{ incident.id }}</span>
+          </div>
+          <div class="card-title">{{ incident.title }}</div>
+          <div class="card-description" *ngIf="incident.description">
+            {{ incident.description | slice:0:100 }}{{ incident.description.length > 100 ? '...' : '' }}
+          </div>
+          <div class="card-footer">
+            <span class="date">{{ formatDate(incident.creationDate) }}</span>
+            <span class="type">{{ incident.incidentType }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Résolu -->
+    <div class="kanban-column">
+      <div class="column-header resolu">
+        <h3>Résolu</h3>
+        <span class="count">{{ resolu.length }}</span>
+      </div>
+      <div class="column-content" 
+           cdkDropList 
+           id="resolu"
+           [cdkDropListData]="resolu"
+           [cdkDropListConnectedTo]="['backlog', 'ouvert', 'enCours', 'aValider']"
+           (cdkDropListDropped)="onDrop($event)">
+        <div class="incident-card" 
+             *ngFor="let incident of resolu" 
+             cdkDrag>
+          <div class="card-header">
+            <span class="priority-badge" 
+                  [style.background-color]="getPriorityColor(incident.priority)">
+              {{ getPriorityLabel(incident.priority) }}
+            </span>
+            <span class="incident-id">#{{ incident.id }}</span>
+          </div>
+          <div class="card-title">{{ incident.title }}</div>
+          <div class="card-description" *ngIf="incident.description">
+            {{ incident.description | slice:0:100 }}{{ incident.description.length > 100 ? '...' : '' }}
+          </div>
+          <div class="card-footer">
+            <span class="date">{{ formatDate(incident.resolutionDate) }}</span>
+            <span class="type">{{ incident.incidentType }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading template -->
+  <ng-template #loadingTemplate>
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Chargement des incidents...</p>
+    </div>
+  </ng-template>
+
+  <!-- Empty state -->
+  <div class="empty-state" *ngIf="!loading && incidents.length === 0">
+    <mat-icon>assignment</mat-icon>
+    <h3>Aucun incident trouvé</h3>
+    <p>Commencez par créer votre premier incident</p>
+    <button mat-raised-button color="primary" (click)="createTicket()">
+      Créer un incident
+    </button>
+  </div>
+</div>

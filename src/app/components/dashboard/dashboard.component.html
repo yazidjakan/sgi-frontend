@@ -1,0 +1,155 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h2>Tableau de bord - SGI</h2>
+    <button mat-raised-button color="primary" (click)="refreshData()">
+      <mat-icon>refresh</mat-icon>
+      Actualiser
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Chargement des données...</p>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid" *ngIf="!loading">
+    <div class="kpi-card">
+      <div class="kpi-icon">
+        <mat-icon>assignment</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ totalIncidents }}</h3>
+        <p>Total Incidents</p>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ resolvedIncidents }}</h3>
+        <p>Incidents Résolus</p>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon">
+        <mat-icon>pending</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ openIncidents }}</h3>
+        <p>Incidents Ouverts</p>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon">
+        <mat-icon>schedule</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ averageResolutionTime | number:'1.1-1' }}h</h3>
+        <p>Temps de Résolution Moyen</p>
+      </div>
+    </div>
+
+    <div class="kpi-card sla-compliance" [style.background-color]="getComplianceColor(slaComplianceRate)">
+      <div class="kpi-icon">
+        <mat-icon>trending_up</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ slaComplianceRate | number:'1.0-1' }}%</h3>
+        <p>Conformité SLA</p>
+        <small>{{ getComplianceLabel(getComplianceLevel(slaComplianceRate)) }}</small>
+      </div>
+    </div>
+
+    <div class="kpi-card overdue">
+      <div class="kpi-icon">
+        <mat-icon>warning</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ overdueIncidents }}</h3>
+        <p>Violations SLA</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="charts-section" *ngIf="!loading">
+    <div class="chart-container">
+      <h3>Performance des Techniciens</h3>
+      <canvas id="technicianChart"></canvas>
+    </div>
+
+    <div class="chart-container">
+      <h3>Conformité SLA</h3>
+      <canvas id="slaComplianceChart"></canvas>
+    </div>
+
+    <div class="chart-container full-width">
+      <h3>Évolution des Incidents (7 derniers jours)</h3>
+      <canvas id="incidentTrendChart"></canvas>
+    </div>
+  </div>
+
+  <!-- SLA Violations Table -->
+  <div class="violations-section" *ngIf="!loading && slaViolations.length > 0">
+    <h3>Violations SLA Récentes</h3>
+    <div class="table-container">
+      <table mat-table [dataSource]="slaViolations" class="violations-table">
+        <!-- Incident ID Column -->
+        <ng-container matColumnDef="incidentId">
+          <th mat-header-cell *matHeaderCellDef>ID Incident</th>
+          <td mat-cell *matCellDef="let violation">#{{ violation.incidentId }}</td>
+        </ng-container>
+
+        <!-- Incident Type Column -->
+        <ng-container matColumnDef="incidentType">
+          <th mat-header-cell *matHeaderCellDef>Type d'Incident</th>
+          <td mat-cell *matCellDef="let violation">{{ violation.incidentType }}</td>
+        </ng-container>
+
+        <!-- Violation Type Column -->
+        <ng-container matColumnDef="violationType">
+          <th mat-header-cell *matHeaderCellDef>Type de Violation</th>
+          <td mat-cell *matCellDef="let violation">
+            <span class="violation-badge" 
+                  [class.response]="violation.violationType === 'RESPONSE'"
+                  [class.resolution]="violation.violationType === 'RESOLUTION'">
+              {{ violation.violationType === 'RESPONSE' ? 'Réponse' : 'Résolution' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Violation Time Column -->
+        <ng-container matColumnDef="violationTime">
+          <th mat-header-cell *matHeaderCellDef>Date de Violation</th>
+          <td mat-cell *matCellDef="let violation">
+            {{ violation.violationTime | date:'dd/MM/yyyy HH:mm' }}
+          </td>
+        </ng-container>
+
+        <!-- Exceeded By Column -->
+        <ng-container matColumnDef="exceededBy">
+          <th mat-header-cell *matHeaderCellDef>Dépassement</th>
+          <td mat-cell *matCellDef="let violation">
+            {{ formatDuration(violation.exceededBy) }}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="['incidentId', 'incidentType', 'violationType', 'violationTime', 'exceededBy']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['incidentId', 'incidentType', 'violationType', 'violationTime', 'exceededBy'];"></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!loading && totalIncidents === 0">
+    <mat-icon>dashboard</mat-icon>
+    <h3>Aucune donnée disponible</h3>
+    <p>Commencez par créer des incidents pour voir les statistiques</p>
+  </div>
+</div>

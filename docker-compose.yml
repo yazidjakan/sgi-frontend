@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  # Frontend Angular
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    environment:
+      - API_URL=http://backend:8080/api
+      - PREDICTION_API_URL=http://prediction:5000/api
+    networks:
+      - sgi-network
+
+  # Backend Spring Boot
+  backend:
+    image: sgi-backend:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/sgi_db
+      - SPRING_DATASOURCE_USERNAME=sgi_user
+      - SPRING_DATASOURCE_PASSWORD=sgi_password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - sgi-network
+
+  # Python Prediction Service
+  prediction:
+    image: sgi-prediction:latest
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - DATABASE_URL=mysql://sgi_user:sgi_password@mysql:3306/sgi_db
+    depends_on:
+      - mysql
+    networks:
+      - sgi-network
+
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=sgi_db
+      - MYSQL_USER=sgi_user
+      - MYSQL_PASSWORD=sgi_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - sgi-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - sgi-network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./nginx-proxy.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - frontend
+      - backend
+      - prediction
+    networks:
+      - sgi-network
+
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  sgi-network:
+    driver: bridge

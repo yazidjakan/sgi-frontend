@@ -1,0 +1,78 @@
+/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+html, body { height: 100%; }
+body { 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
+  background-color: #f5f5f5;
+}
+
+/* Custom SGI Theme Colors */
+:root {
+  --sgi-primary: #673ab7;
+  --sgi-secondary: #ff9800;
+  --sgi-success: #4caf50;
+  --sgi-warning: #ff9800;
+  --sgi-danger: #f44336;
+  --sgi-info: #2196f3;
+  --sgi-light: #f8f9fa;
+  --sgi-dark: #343a40;
+}
+
+/* SGI Logo Styles */
+.sgi-logo {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: var(--sgi-primary);
+}
+
+/* Custom Card Styles */
+.sgi-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background: white;
+  margin: 16px;
+  padding: 16px;
+}
+
+/* Status Colors */
+.status-backlog { color: #6c757d; }
+.status-ouvert { color: #007bff; }
+.status-en-cours { color: #ffc107; }
+.status-a-valider { color: #fd7e14; }
+.status-resolu { color: #28a745; }
+
+/* Priority Colors */
+.priority-critique { color: #dc3545; }
+.priority-elevee { color: #fd7e14; }
+.priority-moyenne { color: #ffc107; }
+.priority-faible { color: #28a745; }
+
+/* Dashboard KPI Cards */
+.kpi-card {
+  border-radius: 12px;
+  padding: 20px;
+  margin: 10px;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+}
+
+.kpi-card.success { background: linear-gradient(135deg, #4caf50, #45a049); }
+.kpi-card.warning { background: linear-gradient(135deg, #ff9800, #f57c00); }
+.kpi-card.danger { background: linear-gradient(135deg, #f44336, #d32f2f); }
+.kpi-card.info { background: linear-gradient(135deg, #2196f3, #1976d2); }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sgi-card {
+    margin: 8px;
+    padding: 12px;
+  }
+  
+  .kpi-card {
+    margin: 5px;
+    padding: 15px;
+  }
+}
