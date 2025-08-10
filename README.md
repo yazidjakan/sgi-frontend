@@ -168,9 +168,6 @@ ng serve
 ```
 L'application sera accessible sur `http://localhost:4200`
 
-
-
-
 ## 📁 Structure du projet
 
 ```
@@ -255,9 +252,6 @@ sgi-frontend/
 ### Page de connexion
 ![Login](screenshots/login.png)
 
-
-
-
 ## 🤝 Contribution
 
 1. Fork le projet
@@ -266,12 +260,9 @@ sgi-frontend/
 4. Push vers la branche (`git push origin feature/AmazingFeature`)
 5. Ouvrir une Pull Request
 
-
 **JAKAN EL YAZID**
 - GitHub: [@yazidjakan](https://github.com/yazidjakan)
 - LinkedIn: [El Yazid JAKAN](https://www.linkedin.com/in/el-yazid-jakan/)
-
-
 
 ---
 
