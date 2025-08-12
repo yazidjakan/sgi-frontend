@@ -12,10 +12,14 @@ export class JwtInterceptor implements HttpInterceptor {
   constructor(private auth: AuthService, private router: Router) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const isAuthEndpoint = req.url.includes('/v1/auth/');
     const token = this.auth.getToken();
-    const authReq = token ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : req;
+    let request = req;
+    if (!isAuthEndpoint && token) {
+      request = req.clone({ setHeaders: { Authorization: `Bearer ${token}` } });
+    }
 
-    return next.handle(authReq).pipe(
+    return next.handle(request).pipe(
       catchError((err: HttpErrorResponse) => {
         if (err.status === 401) {
           this.auth.logout();

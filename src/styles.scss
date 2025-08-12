@@ -1,4 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
+/* Disable page scrolling on auth screens */
+html.auth-no-scroll,
+body.auth-no-scroll {
+  height: 100vh !important;
+  overflow: hidden !important;
+}
+
+/* On some desktop browsers, the page can still scroll if the root container is taller. Force the app root to fill the viewport and hide overflow. */
+app-root, body > app-root, html > body > app-root {
+  height: 100vh;
+  overflow: hidden;
+  display: block;
+}
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 
 html, body { height: 100%; }

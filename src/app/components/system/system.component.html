@@ -1,0 +1,36 @@
+<div class="page-header">
+  <h2>Configuration</h2>
+  <button mat-stroked-button color="primary" (click)="save()"><mat-icon>save</mat-icon> Sauvegarder</button>
+</div>
+
+<form [formGroup]="form" class="grid">
+  <mat-card>
+    <mat-card-title>Préférences générales</mat-card-title>
+    <mat-card-content>
+      <mat-form-field appearance="outline" style="width: 200px;">
+        <mat-label>Thème</mat-label>
+        <mat-select formControlName="theme">
+          <mat-option value="clair">Clair</mat-option>
+          <mat-option value="sombre">Sombre</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" style="width: 200px; margin-left: 16px;">
+        <mat-label>Langue</mat-label>
+        <mat-select formControlName="language">
+          <mat-option value="fr">Français</mat-option>
+          <mat-option value="en">English</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-title>Notifications</mat-card-title>
+    <mat-card-content>
+      <mat-slide-toggle formControlName="notifications">Activer les notifications</mat-slide-toggle>
+    </mat-card-content>
+  </mat-card>
+</form>
+
+

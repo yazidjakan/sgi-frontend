@@ -1,0 +1,70 @@
+<div class="register-container">
+    <div class="register-card">
+      <h1>Créer un compte</h1>
+      <p>Rejoignez SGI pour gérer vos incidents</p>
+  
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Nom d’utilisateur</mat-label>
+          <input matInput formControlName="username" />
+          <mat-error *ngIf="f['username'].invalid && f['username'].touched">
+            {{ f['username'].hasError('required') ? 'Requis' : 'Au moins 3 caractères' }}
+          </mat-error>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" />
+          <mat-error *ngIf="f['email'].invalid && f['email'].touched">
+            {{ f['email'].hasError('required') ? 'Requis' : 'Email invalide' }}
+          </mat-error>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Mot de passe</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" />
+          <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-hint>6+ caractères</mat-hint>
+          <mat-error *ngIf="f['password'].invalid && f['password'].touched">
+            Mot de passe trop court
+          </mat-error>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Confirmer le mot de passe</mat-label>
+          <input matInput [type]="hideConfirm ? 'password' : 'text'" formControlName="confirmPassword" />
+          <button mat-icon-button matSuffix type="button" (click)="hideConfirm = !hideConfirm">
+            <mat-icon>{{ hideConfirm ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-error *ngIf="form.hasError('passwordMismatch') && f['confirmPassword'].touched">
+            Les mots de passe ne correspondent pas
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Rôle</mat-label>
+          <mat-select formControlName="role">
+            <mat-option value="ROLE_USER">Utilisateur</mat-option>
+            <mat-option value="ROLE_TECHNICIAN">Technicien</mat-option>
+            <mat-option value="ROLE_MANAGER">Manager</mat-option>
+          </mat-select>
+        </mat-form-field>
+  
+        <mat-checkbox formControlName="acceptTerms">
+          J’accepte les conditions d’utilisation
+        </mat-checkbox>
+        <div class="spacer"></div>
+  
+        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || loading">
+          <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+          <span *ngIf="!loading">Créer mon compte</span>
+        </button>
+  
+        <div class="alt">
+          Déjà inscrit ? <a (click)="openLogin()" role="button" tabindex="0">Se connecter</a>
+        </div>
+      </form>
+    </div>
+  </div>

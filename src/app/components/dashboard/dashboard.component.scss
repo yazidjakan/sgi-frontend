@@ -1,5 +1,17 @@
 .dashboard-container {
   padding: 20px;
+  min-height: calc(100vh - 104px);
+  background: linear-gradient(180deg, rgba(247,249,252,.6) 0%, rgba(238,242,247,.6) 100%), url('/assets/images/background-login-page.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.surface {
+  backdrop-filter: blur(4px);
+  background: rgba(255,255,255,0.86);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  padding: 16px;
 }
 
 .dashboard-header {
@@ -8,6 +20,9 @@
   align-items: center;
   margin-bottom: 30px;
 }
+.dashboard-header .title { display:flex; align-items:center; gap:10px; }
+.dashboard-header .title img { height:28px; width:auto; }
+.dashboard-header h2 { color:#1f2937; }
 
 .dashboard-header h1 {
   color: #333;
@@ -35,20 +50,29 @@
   align-items: center;
   padding: 20px;
   border-radius: 12px;
-  color: white;
+  background: rgba(255,255,255,0.95);
+  color: #333;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .kpi-card.success {
   background: linear-gradient(135deg, #4caf50, #45a049);
+  color:#fff;
 }
 
 .kpi-card.warning {
   background: linear-gradient(135deg, #ff9800, #f57c00);
+  color:#fff;
 }
 
 .kpi-card.info {
   background: linear-gradient(135deg, #2196f3, #1976d2);
+  color:#fff;
+}
+
+.kpi-card.overdue {
+  background: linear-gradient(135deg, #e53935, #c62828);
+  color:#fff;
 }
 
 .kpi-icon {
@@ -81,7 +105,7 @@
 }
 
 .chart-section, .table-section {
-  background: white;
+  background: rgba(255,255,255,0.92);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);

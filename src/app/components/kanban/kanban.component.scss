@@ -2,14 +2,21 @@
   padding: 20px;
   height: calc(100vh - 104px);
   overflow: hidden;
+  background: linear-gradient(180deg, rgba(247,249,252,.6) 0%, rgba(238,242,247,.6) 100%), url('/assets/images/background-login-page.jpg');
+  background-size: cover;
+  background-position: center;
 }
 
 .kanban-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
+.kanban-header .title { display:flex; align-items:center; gap:10px; }
+.kanban-header .title img { height:28px; width:auto; }
+.kanban-header .actions { display:flex; align-items:center; gap:12px; }
+.kanban-header .search { width:280px; }
 
 .kanban-header h1 {
   color: #333;
@@ -33,6 +40,7 @@
   border-radius: 8px;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .column-header {
@@ -44,6 +52,11 @@
   border-radius: 8px 8px 0 0;
   border-bottom: 1px solid #e9ecef;
 }
+.column-header.backlog { border-top: 6px solid #90caf9; }
+.column-header.ouvert { border-top: 6px solid #9575cd; }
+.column-header.en-cours { border-top: 6px solid #ff8a65; }
+.column-header.a-valider { border-top: 6px solid #ffca28; }
+.column-header.resolu { border-top: 6px solid #66bb6a; }
 
 .column-header h3 {
   margin: 0;
@@ -67,6 +80,7 @@
   overflow-y: auto;
   min-height: 200px;
 }
+.add-card { width:100%; margin-top:8px; }
 
 .ticket-card {
   background: white;

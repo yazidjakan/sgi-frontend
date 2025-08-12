@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from './services/auth.service';
 import { UserDto } from './models/auth.model';
 
@@ -11,7 +12,7 @@ export class AppComponent {
   title = 'SGI - Système de Gestion des Incidents';
   currentUser: UserDto | null = null;
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private router: Router) {
     this.authService.currentUser.subscribe(user => {
       this.currentUser = user;
     });
@@ -39,5 +40,9 @@ export class AppComponent {
 
   isUser(): boolean {
     return this.authService.isUser();
+  }
+
+  goDashboard(): void {
+    this.router.navigate(['/dashboard']);
   }
 }

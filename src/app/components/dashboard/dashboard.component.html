@@ -1,10 +1,16 @@
 <div class="dashboard-container">
+  <div class="surface">
   <div class="dashboard-header">
-    <h2>Tableau de bord - SGI</h2>
-    <button mat-raised-button color="primary" (click)="refreshData()">
-      <mat-icon>refresh</mat-icon>
-      Actualiser
-    </button>
+    <div class="title">
+      <img src="assets/images/sgi-logo.png" alt="logo"/>
+      <h2>Tableau de bord</h2>
+    </div>
+    <div class="header-actions">
+      <button mat-stroked-button color="primary" (click)="refreshData()">
+        <mat-icon>refresh</mat-icon>
+        Actualiser
+      </button>
+    </div>
   </div>
 
   <!-- Loading State -->
@@ -15,7 +21,7 @@
 
   <!-- KPI Cards -->
   <div class="kpi-grid" *ngIf="!loading">
-    <div class="kpi-card">
+    <div class="kpi-card info">
       <div class="kpi-icon">
         <mat-icon>assignment</mat-icon>
       </div>
@@ -25,7 +31,7 @@
       </div>
     </div>
 
-    <div class="kpi-card">
+    <div class="kpi-card success">
       <div class="kpi-icon">
         <mat-icon>check_circle</mat-icon>
       </div>
@@ -35,7 +41,7 @@
       </div>
     </div>
 
-    <div class="kpi-card">
+    <div class="kpi-card warning">
       <div class="kpi-icon">
         <mat-icon>pending</mat-icon>
       </div>
@@ -55,7 +61,7 @@
       </div>
     </div>
 
-    <div class="kpi-card sla-compliance" [style.background-color]="getComplianceColor(slaComplianceRate)">
+    <div class="kpi-card info sla-compliance" [style.backgroundColor]="getComplianceColor(slaComplianceRate)">
       <div class="kpi-icon">
         <mat-icon>trending_up</mat-icon>
       </div>
@@ -151,5 +157,6 @@
     <mat-icon>dashboard</mat-icon>
     <h3>Aucune donnée disponible</h3>
     <p>Commencez par créer des incidents pour voir les statistiques</p>
+  </div>
   </div>
 </div>

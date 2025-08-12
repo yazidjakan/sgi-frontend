@@ -1,8 +1,16 @@
 <mat-toolbar color="primary" class="sgi-toolbar">
   <div class="toolbar-content">
     <div class="logo-section">
-      <span class="sgi-logo">SGI</span>
+      <img src="assets/images/sgi-logo.png" alt="SGI Logo" class="sgi-logo-img" />
       <span class="logo-subtitle">Système de Gestion des Incidents</span>
+    </div>
+
+    <!-- Quick links in navbar -->
+    <div class="top-links" *ngIf="isAuthenticated()">
+      <button mat-button (click)="goDashboard()">
+        <mat-icon>dashboard</mat-icon>
+        <span>Dashboard</span>
+      </button>
     </div>
     
     <div class="user-section" *ngIf="isAuthenticated()">
@@ -41,11 +49,7 @@
           <span>Mes tickets</span>
         </a>
 
-        <!-- Créer un ticket -->
-        <a mat-list-item routerLink="/tickets/create" routerLinkActive="active">
-          <mat-icon>add_circle</mat-icon>
-          <span>Créer un ticket</span>
-        </a>
+  
 
         <!-- Menu Manager -->
         <ng-container *ngIf="isManager()">

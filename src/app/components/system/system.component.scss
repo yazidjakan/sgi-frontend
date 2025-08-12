@@ -1,0 +1,12 @@
+.page-header { display:flex; align-items:center; justify-content: space-between; }
+.grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap:16px; }
+
+:host {
+  display:block;
+  min-height: calc(100vh - 104px);
+  background: linear-gradient(180deg, rgba(247,249,252,.6) 0%, rgba(238,242,247,.6) 100%), url('/assets/images/background-login-page.jpg');
+  background-size: cover;
+  background-position: center;
+  padding: 20px;
+}
+

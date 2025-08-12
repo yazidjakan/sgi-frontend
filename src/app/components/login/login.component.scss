@@ -34,11 +34,11 @@
   font-size: 0.9rem;
 }
 
-.sgi-logo-large {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: var(--sgi-primary);
-  margin: 20px 0;
+.sgi-logo-hero {
+  width: 250px;
+  height: auto;
+  margin: 16px auto 8px auto;
+  display: block;
 }
 
 .login-form {
@@ -138,6 +138,102 @@
   }
   
   .sgi-logo-large {
-    font-size: 2rem;
+    width: 100px;
   }
+}
+
+/* ===== Modernized layout (new structure) ===== */
+.login-wrapper {
+  height: calc(100vh - 64px);
+  display: grid;
+  grid-template-columns: 1fr 480px;
+  gap: 16px;
+  align-items: center;
+  padding: 40px 24px;
+  background: linear-gradient(180deg, rgba(247,249,252,.6) 0%, rgba(238,242,247,.6) 100%), url('/assets/images/background-login-page.jpg');
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: #fff;
+  gap: 6px;
+}
+
+.hero-logo {
+  width: 240px;
+  height: auto;
+  margin-bottom: 6px;
+}
+
+.hero h1 {
+  font-size: 2.2rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--sgi-primary, #673ab7); /* noir comme le logo */
+  text-shadow: none;
+  border: none;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.tagline {
+  color: #000;/* mauve SGI */
+  text-shadow: none;
+  margin: 0;
+  border: none;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.form-panel {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  max-height: 80vh;
+  overflow: auto;
+}
+
+.panel-header h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 6px 0;
+}
+
+.panel-header .register { margin: 0 0 12px 0; }
+.panel-header a { color: var(--sgi-primary); text-decoration: none; }
+.panel-header a:hover { text-decoration: underline; }
+
+.full-width { width: 100%; }
+
+.form-extras {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 8px 0 16px 0;
+}
+
+.link { color: var(--sgi-primary); text-decoration: none; }
+.link:hover { text-decoration: underline; }
+
+.submit-btn { width: 100%; height: 48px; font-weight: 600; }
+
+.panel-footer { margin-top: 16px; text-align: center; color: #666; font-size: 0.9rem; }
+.panel-footer .sep { margin: 0 8px; }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .login-wrapper { grid-template-columns: 1fr; padding: 24px 16px; height: calc(100vh - 64px); }
+  .hero { order: -1; }
 }

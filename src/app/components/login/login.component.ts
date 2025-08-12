@@ -1,74 +1,108 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { ToastrService } from 'ngx-toastr';
-import { AuthenticationRequest } from '../../models/auth.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { RegisterComponent } from '../register/register.component';
 
 @Component({
   selector: 'app-login',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatButtonModule,
+    MatIconModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
+    RegisterComponent
+  ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   loading = false;
   hidePassword = true;
+  returnUrl = '/dashboard';
+  showRegister = false;
 
   constructor(
-    private formBuilder: FormBuilder,
-    private authService: AuthService,
+    private fb: FormBuilder,
+    private auth: AuthService,
     private router: Router,
-    private toastr: ToastrService
+    private route: ActivatedRoute,
+    private snackBar: MatSnackBar
   ) {
-    this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required]],
+    this.loginForm = this.fb.group({
+      username: ['', [Validators.required]],
       password: ['', [Validators.required]],
       rememberMe: [false]
     });
   }
 
-  onSubmit(): void {
-    if (this.loginForm.valid) {
-      this.loading = true;
-      const { email, password } = this.loginForm.value;
+  ngOnInit(): void {
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+    document.documentElement.classList.add('auth-no-scroll');
+    document.body.classList.add('auth-no-scroll');
+  }
 
-      this.authService.login(email, password).subscribe({
-        next: (response) => {
-          this.loading = false;
-          this.toastr.success('Connexion réussie', 'Bienvenue !');
-          
-          // Redirection selon le rôle
-          if (this.authService.isAdmin()) {
-            this.router.navigate(['/users']);
-          } else if (this.authService.isManager()) {
-            this.router.navigate(['/dashboard']);
-          } else if (this.authService.isTechnician()) {
-            this.router.navigate(['/assigned-tickets']);
-          } else {
-            this.router.navigate(['/tickets']);
-          }
-        },
-        error: (error: any) => {
-          this.loading = false;
-          this.toastr.error('Email ou mot de passe incorrect', 'Erreur de connexion');
-          console.error('Login error:', error);
+  ngOnDestroy(): void {
+    document.documentElement.classList.remove('auth-no-scroll');
+    document.body.classList.remove('auth-no-scroll');
+  }
+
+  onSubmit(): void {
+    if (this.loginForm.invalid) return;
+    this.loading = true;
+    const { username, password } = this.loginForm.value;
+
+    this.auth.login(username, password).subscribe({
+      next: () => {
+        this.loading = false;
+        this.snackBar.open('Connexion réussie', 'OK', { duration: 2500 });
+
+        if (this.returnUrl && this.returnUrl !== '/login') {
+          this.router.navigateByUrl(this.returnUrl);
+          return;
         }
-      });
-    }
+        if (this.auth.isAdmin()) this.router.navigate(['/users']);
+        else if (this.auth.isManager()) this.router.navigate(['/dashboard']);
+        else if (this.auth.isTechnician()) this.router.navigate(['/assigned-tickets']);
+        else this.router.navigate(['/tickets']);
+      },
+      error: () => {
+        this.loading = false;
+        this.snackBar.open('Nom d’utilisateur ou mot de passe incorrect', 'Fermer', { duration: 3000 });
+      }
+    });
   }
 
   getErrorMessage(field: string): string {
-    const control = this.loginForm.get(field);
-    if (control?.hasError('required')) {
-      return 'Ce champ est requis';
-    }
-    if (field === 'email' && control?.hasError('email')) {
-      return 'Email invalide';
-    }
-    if (field === 'password' && control?.hasError('minlength')) {
-      return 'Le mot de passe doit contenir au moins 6 caractères';
-    }
+    const c = this.loginForm.get(field);
+    if (c?.hasError('required')) return field === 'username' ? 'Nom d’utilisateur requis' : 'Mot de passe requis';
     return '';
+  }
+
+  openRegister(): void {
+    this.showRegister = true;
+  }
+
+  backToLogin(): void {
+    this.showRegister = false;
   }
 }

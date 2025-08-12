@@ -1,72 +1,48 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../models/user.model';
 import { environment } from '../../environments/environment';
-import { AuthService } from './auth.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class UserService {
-  private apiUrl = environment.apiUrl;
+  private base = `${environment.apiUrl}/v1/users`; // -> /api/v1/users
 
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService
-  ) { }
+  constructor(private http: HttpClient) {}
 
-  private getHeaders(): HttpHeaders {
-    const user = this.authService.currentUserValue;
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${user?.token || ''}`
-    });
-  }
-
-  // Récupérer tous les utilisateurs
   getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.apiUrl}/users`, { headers: this.getHeaders() });
+    return this.http.get<User[]>(`${this.base}`);
   }
 
-  // Récupérer un utilisateur par ID
   getUser(id: number): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/users/${id}`, { headers: this.getHeaders() });
+    return this.http.get<User>(`${this.base}/id/${id}`);
   }
 
-  // Créer un nouvel utilisateur
   createUser(user: any): Observable<User> {
-    return this.http.post<User>(`${this.apiUrl}/users`, user, { headers: this.getHeaders() });
+    return this.http.post<User>(`${this.base}`, user);
   }
 
-  // Mettre à jour un utilisateur
   updateUser(id: number, user: any): Observable<User> {
-    return this.http.put<User>(`${this.apiUrl}/users/${id}`, user, { headers: this.getHeaders() });
+    return this.http.put<User>(`${this.base}/id/${id}`, user);
   }
 
-  // Supprimer un utilisateur
   deleteUser(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/users/${id}`, { headers: this.getHeaders() });
+    return this.http.delete<void>(`${this.base}/id/${id}`);
   }
 
-  // Récupérer les techniciens
   getTechnicians(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.apiUrl}/users/technicians`, { headers: this.getHeaders() });
+    return this.http.get<User[]>(`${this.base}/technicians`);
   }
 
-  // Récupérer les managers
   getManagers(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.apiUrl}/users/managers`, { headers: this.getHeaders() });
+    return this.http.get<User[]>(`${this.base}/managers`);
   }
 
-  // Changer le mot de passe
   changePassword(userId: number, oldPassword: string, newPassword: string): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/users/${userId}/password`, 
-      { oldPassword, newPassword }, { headers: this.getHeaders() });
+    return this.http.put<any>(`${this.base}/id/${userId}/password`, { oldPassword, newPassword });
   }
 
-  // Réinitialiser le mot de passe
   resetPassword(email: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/users/reset-password`, { email });
+    return this.http.post<any>(`${this.base}/reset-password`, { email });
   }
 }

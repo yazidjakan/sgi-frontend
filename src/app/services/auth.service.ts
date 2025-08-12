@@ -3,29 +3,23 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
-import { 
-  AuthenticationRequest, 
-  AuthenticationResponse, 
-  RegisterDto, 
-  UserDto, 
+import { MatSnackBar } from '@angular/material/snack-bar';
+import {
+  AuthenticationRequest,
+  AuthenticationResponse,
+  RegisterDto,
+  UserDto,
   RoleDto,
-  UserRole 
+  UserRole
 } from '../models/auth.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
   private currentUserSubject: BehaviorSubject<UserDto | null>;
   public currentUser: Observable<UserDto | null>;
   private apiUrl = environment.apiUrl;
 
-  constructor(
-    private http: HttpClient,
-    private router: Router,
-    private toastr: ToastrService
-  ) {
+  constructor(private http: HttpClient, private router: Router, private snackBar: MatSnackBar) {
     this.currentUserSubject = new BehaviorSubject<UserDto | null>(
       JSON.parse(localStorage.getItem('currentUser') || 'null')
     );
@@ -36,119 +30,68 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
+  get token(): string | null { return localStorage.getItem('token'); }
+  getToken(): string | null { return this.token; }
+
   login(username: string, password: string): Observable<AuthenticationResponse> {
     const request: AuthenticationRequest = { username, password };
-    
-    return this.http.post<AuthenticationResponse>(`${this.apiUrl}/v1/auth/login`, request)
-      .pipe(
-        tap(response => {
-          // Store user details and jwt token in local storage
-          const user: UserDto = {
-            id: response.userId,
-            username: username,
-            email: '', // Will be fetched separately if needed
-            password: '',
-            roleDtos: response.roles.map(role => ({ id: undefined, nom: role }))
-          };
-          
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          localStorage.setItem('token', response.token);
-          this.currentUserSubject.next(user);
-        })
-      );
+    return this.http.post<AuthenticationResponse>(`${this.apiUrl}/v1/auth/login`, request).pipe(
+      tap(response => {
+        const normalized = response.roles.map(r => r.replace(/^ROLE_/, '').toUpperCase());
+        const user: UserDto = {
+          id: response.userId,
+          username, email: '', password: '',
+          roleDtos: normalized.map(n => ({ id: undefined, nom: n }))
+        };
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        localStorage.setItem('token', response.token);
+        this.currentUserSubject.next(user);
+      })
+    );
   }
 
   logout(): void {
-    // Remove user from local storage and set current user to null
     localStorage.removeItem('currentUser');
     localStorage.removeItem('token');
     this.currentUserSubject.next(null);
     this.router.navigate(['/login']);
-    this.toastr.success('Déconnexion réussie');
+    this.snackBar.open('Déconnexion réussie', 'OK', { duration: 2500 });
   }
 
-  register(registerDto: RegisterDto): Observable<string> {
-    return this.http.post<string>(`${this.apiUrl}/v1/auth/register`, registerDto);
+  register(username: string, email: string, password: string, role: string): Observable<any> {
+    const payload = { username, email, password, role };
+    return this.http.post<any>(`${this.apiUrl}/v1/auth/register`, payload);
   }
 
   isAuthenticated(): boolean {
-    return this.currentUserValue !== null && localStorage.getItem('token') !== null;
+    return !!this.currentUserValue && !!this.token;
   }
 
   hasRole(role: string): boolean {
-    const user = this.currentUserValue;
-    if (!user || !user.roleDtos) return false;
-    return user.roleDtos.some(r => r.nom === role);
+    const want = role.replace(/^ROLE_/, '').toUpperCase();
+    const roles = (this.currentUserValue?.roleDtos ?? []).map(r => (r.nom || '').toUpperCase());
+    return roles.includes(want);
   }
 
-  hasAnyRole(roles: string[]): boolean {
-    const user = this.currentUserValue;
-    if (!user || !user.roleDtos) return false;
-    return user.roleDtos.some(r => roles.includes(r.nom));
+  hasAnyRole(desiredRoles: string[]): boolean {
+    const wants = desiredRoles.map(r => r.replace(/^ROLE_/, '').toUpperCase());
+    const userRoles = (this.currentUserValue?.roleDtos ?? []).map(r => (r.nom || '').toUpperCase());
+    return userRoles.some(r => wants.includes(r));
   }
 
-  isAdmin(): boolean {
-    return this.hasRole(UserRole.ADMIN);
-  }
+  isAdmin()      { return this.hasRole(UserRole.ADMIN); }
+  isManager()    { return this.hasRole(UserRole.MANAGER); }
+  isTechnician() { return this.hasRole(UserRole.TECHNICIAN); }
+  isUser()       { return this.hasRole(UserRole.USER); }
 
-  isManager(): boolean {
-    return this.hasRole(UserRole.MANAGER);
-  }
-
-  isTechnician(): boolean {
-    return this.hasRole(UserRole.TECHNICIAN);
-  }
-
-  isUser(): boolean {
-    return this.hasRole(UserRole.USER);
-  }
-
-  getToken(): string | null {
-    return localStorage.getItem('token');
-  }
-
-  // Get all roles from the backend
-  getRoles(): Observable<RoleDto[]> {
-    return this.http.get<RoleDto[]>(`${this.apiUrl}/v1/roles`);
-  }
-
-  // Get all users (admin only)
-  getUsers(): Observable<UserDto[]> {
-    return this.http.get<UserDto[]>(`${this.apiUrl}/v1/users`);
-  }
-
-  // Get user by ID
-  getUserById(id: number): Observable<UserDto> {
-    return this.http.get<UserDto>(`${this.apiUrl}/v1/users/id/${id}`);
-  }
-
-  // Create new user
-  createUser(userDto: UserDto): Observable<UserDto> {
-    return this.http.post<UserDto>(`${this.apiUrl}/v1/users`, userDto);
-  }
-
-  // Update user
-  updateUser(userDto: UserDto, id: number): Observable<UserDto> {
-    return this.http.put<UserDto>(`${this.apiUrl}/v1/users/id/${id}`, userDto);
-  }
-
-  // Delete user
-  deleteUser(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/v1/users/id/${id}`);
-  }
-
-  // Create new role
-  createRole(roleDto: RoleDto): Observable<RoleDto> {
-    return this.http.post<RoleDto>(`${this.apiUrl}/v1/roles`, roleDto);
-  }
-
-  // Update role
-  updateRole(roleDto: RoleDto, id: number): Observable<RoleDto> {
-    return this.http.put<RoleDto>(`${this.apiUrl}/v1/roles/id/${id}`, roleDto);
-  }
-
-  // Delete role
-  deleteRole(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/v1/roles/id/${id}`);
-  }
+  // CRUD users/roles (inchangé)
+  getRoles(): Observable<RoleDto[]> { return this.http.get<RoleDto[]>(`${this.apiUrl}/v1/roles`); }
+  getUsers(): Observable<UserDto[]> { return this.http.get<UserDto[]>(`${this.apiUrl}/v1/users`); }
+  getUserById(id: number): Observable<UserDto> { return this.http.get<UserDto>(`${this.apiUrl}/v1/users/id/${id}`); }
+  createUser(userDto: UserDto): Observable<UserDto> { return this.http.post<UserDto>(`${this.apiUrl}/v1/users`, userDto); }
+  updateUser(userDto: UserDto, id: number): Observable<UserDto> { return this.http.put<UserDto>(`${this.apiUrl}/v1/users/id/${id}`, userDto); }
+  deleteUser(id: number): Observable<void> { return this.http.delete<void>(`${this.apiUrl}/v1/users/id/${id}`); }
+  createRole(roleDto: RoleDto): Observable<RoleDto> { return this.http.post<RoleDto>(`${this.apiUrl}/v1/roles`, roleDto); }
+  updateRole(roleDto: RoleDto, id: number): Observable<RoleDto> { return this.http.put<RoleDto>(`${this.apiUrl}/v1/roles/id/${id}`, roleDto); }
+  deleteRole(id: number): Observable<void> { return this.http.delete<void>(`${this.apiUrl}/v1/roles/id/${id}`); }
 }

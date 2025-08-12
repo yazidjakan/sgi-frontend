@@ -43,12 +43,16 @@ import { ToastrModule } from 'ngx-toastr';
 
 // Components
 import { AppComponent } from './app.component';
-import { LoginComponent } from './components/login/login.component';
+// LoginComponent is standalone
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { KanbanComponent } from './components/kanban/kanban.component';
 import { NotificationsComponent } from './components/notifications/notifications.component';
 import { ReportsComponent } from './components/reports/reports.component';
 import { PredictionsComponent } from './components/predictions/predictions.component';
+import { UsersComponent } from './components/users/users.component';
+import { SystemComponent } from './components/system/system.component';
+import { SearchComponent } from './components/search/search.component';
+import { HelpComponent } from './components/help/help.component';
 
 // Guards
 import { AuthGuard } from './guards/auth.guard';
@@ -60,87 +64,39 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
-  { 
-    path: 'dashboard', 
-    component: DashboardComponent, 
-    canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['Manager', 'Admin système'] }
-  },
-  { 
-    path: 'tickets', 
-    component: KanbanComponent, 
-    canActivate: [AuthGuard] 
-  },
-  { 
-    path: 'tickets/create', 
-    component: KanbanComponent, // TODO: Create TicketComponent
-    canActivate: [AuthGuard] 
-  },
-  { 
-    path: 'assigned-tickets', 
-    component: KanbanComponent, // TODO: Create AssignedTicketsComponent
-    canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['Technicien'] }
-  },
-  { 
-    path: 'users', 
-    component: DashboardComponent, // TODO: Create UsersComponent
-    canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['Admin système'] }
-  },
-  { 
-    path: 'sla', 
-    component: DashboardComponent, // TODO: Create SLAComponent
-    canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['Manager', 'Admin système'] }
-  },
-  { 
-    path: 'performance', 
-    component: DashboardComponent, // TODO: Create PerformanceComponent
-    canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['Manager', 'Admin système'] }
-  },
-  { 
-    path: 'reports', 
-    component: ReportsComponent,
-    canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['Manager', 'Admin système'] }
-  },
-  { 
-    path: 'technicians', 
-    component: DashboardComponent, // TODO: Create TechniciansComponent
-    canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['Manager', 'Admin système'] }
-  },
-  { 
-    path: 'system', 
-    component: DashboardComponent, // TODO: Create SystemComponent
-    canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['Admin système'] }
-  },
-  { 
-    path: 'search', 
-    component: DashboardComponent, // TODO: Create SearchComponent
-    canActivate: [AuthGuard] 
-  },
-  { 
-    path: 'help', 
-    component: DashboardComponent, // TODO: Create HelpComponent
-    canActivate: [AuthGuard] 
-  },
+  { path: 'login', loadComponent: () => import('./components/login/login.component').then(m => m.LoginComponent) },
+  { path: 'register', loadComponent: () => import('./components/register/register.component').then(m => m.RegisterComponent) },
+
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard, RoleGuard], data: { roles: ['MANAGER','ADMIN'] } },
+  { path: 'tickets', component: KanbanComponent, canActivate: [AuthGuard] },
+  { path: 'tickets/create', component: KanbanComponent, canActivate: [AuthGuard] },
+
+  { path: 'assigned-tickets', component: KanbanComponent, canActivate: [AuthGuard, RoleGuard], data: { roles: ['TECHNICIAN'] } },
+
+  { path: 'users', component: UsersComponent, canActivate: [AuthGuard, RoleGuard], data: { roles: ['ADMIN'] } },
+  { path: 'sla', component: DashboardComponent, canActivate: [AuthGuard, RoleGuard], data: { roles: ['MANAGER','ADMIN'] } },
+  { path: 'performance', component: DashboardComponent, canActivate: [AuthGuard, RoleGuard], data: { roles: ['MANAGER','ADMIN'] } },
+  { path: 'reports', component: ReportsComponent, canActivate: [AuthGuard, RoleGuard], data: { roles: ['MANAGER','ADMIN'] } },
+  { path: 'technicians', component: DashboardComponent, canActivate: [AuthGuard, RoleGuard], data: { roles: ['MANAGER','ADMIN'] } },
+  { path: 'system', component: SystemComponent, canActivate: [AuthGuard, RoleGuard], data: { roles: ['ADMIN'] } },
+
+  { path: 'search', component: SearchComponent, canActivate: [AuthGuard] },
+  { path: 'help', component: HelpComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '/login' }
 ];
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
     DashboardComponent,
     KanbanComponent,
     NotificationsComponent,
     ReportsComponent,
-    PredictionsComponent
+    PredictionsComponent,
+    UsersComponent,
+    SystemComponent,
+    SearchComponent,
+    HelpComponent
   ],
   imports: [
     BrowserModule,

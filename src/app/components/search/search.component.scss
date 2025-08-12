@@ -1,0 +1,14 @@
+.page-header { display:flex; align-items:center; gap:12px; }
+.page-header .search { width: 420px; }
+.empty { text-align:center; color:#666; margin-top: 32px; }
+.empty mat-icon { font-size:56px; width:56px; height:56px; color: var(--sgi-primary); }
+
+:host {
+  display:block;
+  min-height: calc(100vh - 104px);
+  background: linear-gradient(180deg, rgba(247,249,252,.6) 0%, rgba(238,242,247,.6) 100%), url('/assets/images/background-login-page.jpg');
+  background-size: cover;
+  background-position: center;
+  padding: 20px;
+}
+

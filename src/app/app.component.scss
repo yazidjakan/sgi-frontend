@@ -15,10 +15,15 @@
   padding: 0 16px;
 }
 
+.top-links a { color: #fff; opacity: 0.95; }
+.top-links a.active { background: rgba(255,255,255,0.15); }
+.top-links mat-icon { margin-right: 6px; }
+
 .logo-section {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
 }
 
 .sgi-logo {
@@ -27,10 +32,19 @@
   color: white;
 }
 
+.sgi-logo-img {
+  height: 56px;
+  width: auto;
+  object-fit: contain;
+  filter: none;
+  image-rendering: -webkit-optimize-contrast;
+  margin-bottom: 0;
+}
+
 .logo-subtitle {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.8);
-  margin-top: -4px;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1;
 }
 
 .user-section {
@@ -47,6 +61,9 @@
 .app-container {
   margin-top: 64px;
   height: calc(100vh - 64px);
+  background: linear-gradient(180deg, rgba(247,249,252,.6) 0%, rgba(238,242,247,.6) 100%), url('/assets/images/background-login-page.jpg');
+  background-size: cover;
+  background-position: center;
 }
 
 .sidenav-container {
@@ -59,13 +76,14 @@
 }
 
 .sidenav-content {
-  background-color: #f5f5f5;
-  padding: 20px;
+  background: transparent;
+  padding: 0;
 }
 
 .content-container {
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: none;
+  width: 100%;
+  margin: 0;
 }
 
 mat-nav-list {
