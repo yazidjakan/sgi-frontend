@@ -13,9 +13,91 @@
 }
 .empty mat-icon { font-size: 56px; width: 56px; height: 56px; color: var(--sgi-primary); }
 
-.users-grid { display: grid; grid-template-columns: 380px 1fr; gap: 16px; align-items: start; }
-.form-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+.users-grid { display: grid; grid-template-columns: 380px 1fr; gap: 24px; align-items: start; }
+.form-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+
+/* Equal width inputs aligned with table card */
+.form-card {
+  width: 380px;
+}
+
+.form-grid mat-form-field {
+  width: 100%;
+}
 .table-card { overflow: auto; }
+
+/* Typography hierarchy */
+.page-header h1 {
+  font-size: 1.75rem; /* 28px */
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+/* Consistent card styling */
+.form-card,
+.table-card {
+  border-radius: 12px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.form-card .mat-mdc-card-content,
+.table-card .mat-mdc-card-content {
+  padding: 24px !important;
+}
+
+.form-card .mat-mdc-card-title,
+.table-card .mat-mdc-card-title {
+  padding: 24px 24px 0 24px !important;
+  margin-bottom: 0 !important;
+  font-size: 1.25rem; /* 20px */
+  font-weight: 500;
+  color: #111827;
+}
+
+/* Remove bold from form labels */
+.form-card mat-label,
+.table-card mat-label {
+  font-weight: normal;
+}
+
+/* Required indicator styling */
+.required {
+  color: #6b7280;
+  font-weight: 400;
+}
+
+/* Password strength meter */
+.password-strength {
+  margin-top: 4px;
+}
+
+.strength-bar {
+  height: 4px;
+  background: #e5e7eb;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.strength-fill {
+  height: 100%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+  border-radius: 2px;
+}
+
+.strength-fill.weak { background: #ef4444; }
+.strength-fill.medium { background: #f59e0b; }
+.strength-fill.strong { background: #10b981; }
+
+.strength-text {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.strength-text.weak { color: #ef4444; }
+.strength-text.medium { color: #f59e0b; }
+.strength-text.strong { color: #10b981; }
 
 :host {
   display: block;

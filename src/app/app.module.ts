@@ -46,6 +46,7 @@ import { AppComponent } from './app.component';
 // LoginComponent is standalone
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { KanbanComponent } from './components/kanban/kanban.component';
+import { TicketDialogComponent } from './components/kanban/ticket-dialog.component';
 import { NotificationsComponent } from './components/notifications/notifications.component';
 import { ReportsComponent } from './components/reports/reports.component';
 import { PredictionsComponent } from './components/predictions/predictions.component';
@@ -96,7 +97,8 @@ const routes: Routes = [
     UsersComponent,
     SystemComponent,
     SearchComponent,
-    HelpComponent
+    HelpComponent,
+    TicketDialogComponent
   ],
   imports: [
     BrowserModule,

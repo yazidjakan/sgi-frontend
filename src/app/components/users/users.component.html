@@ -1,5 +1,5 @@
 <div class="page-header">
-  <h2>Gestion des utilisateurs</h2>
+  <h1>Gestion des utilisateurs</h1>
   <button mat-flat-button color="primary" (click)="startCreate()"><mat-icon>person_add</mat-icon> Nouvel utilisateur</button>
   <span class="spacer"></span>
   <mat-form-field appearance="outline" class="search">
@@ -16,23 +16,32 @@
       <form [formGroup]="form">
         <div class="form-grid">
           <mat-form-field appearance="outline">
-            <mat-label>Nom d’utilisateur</mat-label>
-            <input matInput formControlName="username" />
+            <mat-label>Nom d'utilisateur</mat-label>
+            <input matInput formControlName="username" placeholder="Entrez le nom d'utilisateur" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Email</mat-label>
-            <input matInput formControlName="email" type="email" />
+            <input matInput formControlName="email" type="email" placeholder="Entrez l'adresse email" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Mot de passe</mat-label>
-            <input matInput formControlName="password" type="password" />
+            <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" placeholder="Entrez le mot de passe" (input)="checkPasswordStrength($event)" />
+            <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
+              <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
           </mat-form-field>
+          <div class="password-strength" *ngIf="form.get('password')?.value">
+            <div class="strength-bar">
+              <div class="strength-fill" [class]="passwordStrength.level" [style.width]="passwordStrength.percentage + '%'"></div>
+            </div>
+            <small class="strength-text" [class]="passwordStrength.level">{{ passwordStrength.text }}</small>
+          </div>
 
           <mat-form-field appearance="outline">
             <mat-label>Rôles</mat-label>
-            <mat-select formControlName="roleDtos" multiple>
+            <mat-select formControlName="roleDtos" multiple placeholder="Sélectionnez les rôles">
               <mat-option *ngFor="let r of roles" [value]="r">{{ r.nom }}</mat-option>
             </mat-select>
           </mat-form-field>

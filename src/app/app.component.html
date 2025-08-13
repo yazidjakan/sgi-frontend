@@ -1,4 +1,4 @@
-<mat-toolbar color="primary" class="sgi-toolbar">
+<mat-toolbar color="primary" class="sgi-toolbar" *ngIf="!isAuthRoute()">
   <div class="toolbar-content">
     <div class="logo-section">
       <img src="assets/images/sgi-logo.png" alt="SGI Logo" class="sgi-logo-img" />
@@ -14,11 +14,23 @@
     </div>
     
     <div class="user-section" *ngIf="isAuthenticated()">
+      <button mat-icon-button aria-label="Toggle sidebar" (click)="toggleSidebar()">
+        <mat-icon>{{ isSidebarCollapsed ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+      </button>
       <span class="welcome-text">Bienvenue, {{ currentUser?.username }}</span>
       <button mat-icon-button [matMenuTriggerFor]="userMenu">
         <mat-icon>account_circle</mat-icon>
       </button>
       <mat-menu #userMenu="matMenu">
+        <button mat-menu-item (click)="openProfile()">
+          <mat-icon>person</mat-icon>
+          <span>Profil</span>
+        </button>
+        <button mat-menu-item (click)="openSettings()">
+          <mat-icon>settings</mat-icon>
+          <span>Paramètres</span>
+        </button>
+        <mat-divider></mat-divider>
         <button mat-menu-item (click)="logout()">
           <mat-icon>exit_to_app</mat-icon>
           <span>Déconnexion</span>
@@ -28,94 +40,99 @@
   </div>
 </mat-toolbar>
 
-<div class="app-container">
-  <mat-sidenav-container class="sidenav-container">
+<div class="app-container" [class.auth-route]="isAuthRoute()">
+    <mat-sidenav-container class="sidenav-container" [class.collapsed]="isSidebarCollapsed" *ngIf="!isAuthRoute(); else authContent">
     <!-- Sidebar Navigation -->
-    <mat-sidenav #drawer class="sidenav" fixedInViewport
+      <mat-sidenav #drawer class="sidenav" 
                  [attr.role]="(isAuthenticated() ? 'navigation' : '')"
                  [mode]="'side'"
-                 [opened]="isAuthenticated()">
+                   [opened]="isAuthenticated()"
+                   [class.collapsed]="isSidebarCollapsed">
       
-      <mat-nav-list>
+        <mat-nav-list>
         <!-- Accueil -->
-        <a mat-list-item routerLink="/dashboard" routerLinkActive="active">
-          <mat-icon>home</mat-icon>
-          <span>Accueil</span>
+        <a mat-list-item routerLink="/dashboard" routerLinkActive="active" [class.icon-only]="isSidebarCollapsed" 
+           [matTooltip]="isSidebarCollapsed ? 'Accueil' : ''" matTooltipPosition="right">
+          <mat-icon matListItemIcon>home</mat-icon>
+          <span matListItemTitle>Accueil</span>
         </a>
 
         <!-- Mes tickets (pour tous les utilisateurs) -->
-        <a mat-list-item routerLink="/tickets" routerLinkActive="active">
-          <mat-icon>assignment</mat-icon>
-          <span>Mes tickets</span>
+        <a mat-list-item routerLink="/tickets" routerLinkActive="active" [class.icon-only]="isSidebarCollapsed" class="emphasis"
+           [matTooltip]="isSidebarCollapsed ? 'Mes tickets' : ''" matTooltipPosition="right">
+          <mat-icon matListItemIcon>assignment</mat-icon>
+          <span matListItemTitle>Mes tickets</span>
         </a>
 
   
 
         <!-- Menu Manager -->
-        <ng-container *ngIf="isManager()">
+          <ng-container *ngIf="isManager()">
           <mat-divider></mat-divider>
-          <h3 mat-subheader>Gestion</h3>
+            <h3 mat-subheader [class.hidden]="isSidebarCollapsed">Gestion</h3>
           
-          <a mat-list-item routerLink="/sla" routerLinkActive="active">
-            <mat-icon>schedule</mat-icon>
-            <span>Suivi SLA</span>
-          </a>
-          
-          <a mat-list-item routerLink="/performance" routerLinkActive="active">
-            <mat-icon>analytics</mat-icon>
-            <span>Performances</span>
-          </a>
-          
-          <a mat-list-item routerLink="/reports" routerLinkActive="active">
-            <mat-icon>assessment</mat-icon>
-            <span>Rapports</span>
-          </a>
-          
-          <a mat-list-item routerLink="/technicians" routerLinkActive="active">
-            <mat-icon>people</mat-icon>
-            <span>Techniciens</span>
-          </a>
+                        <a mat-list-item routerLink="/sla" routerLinkActive="active" [class.icon-only]="isSidebarCollapsed"
+               [matTooltip]="isSidebarCollapsed ? 'Suivi SLA' : ''" matTooltipPosition="right">
+              <mat-icon matListItemIcon>schedule</mat-icon>
+              <span matListItemTitle>Suivi SLA</span>
+            </a>
+            
+            <a mat-list-item routerLink="/performance" routerLinkActive="active" [class.icon-only]="isSidebarCollapsed"
+               [matTooltip]="isSidebarCollapsed ? 'Performances' : ''" matTooltipPosition="right">
+              <mat-icon matListItemIcon>analytics</mat-icon>
+              <span matListItemTitle>Performances</span>
+            </a>
+            
+            <a mat-list-item routerLink="/reports" routerLinkActive="active" [class.icon-only]="isSidebarCollapsed"
+               [matTooltip]="isSidebarCollapsed ? 'Rapports' : ''" matTooltipPosition="right">
+              <mat-icon matListItemIcon>assessment</mat-icon>
+              <span matListItemTitle>Rapports</span>
+            </a>
+            
+            <a mat-list-item routerLink="/technicians" routerLinkActive="active" [class.icon-only]="isSidebarCollapsed"
+               [matTooltip]="isSidebarCollapsed ? 'Techniciens' : ''" matTooltipPosition="right">
+              <mat-icon matListItemIcon>people</mat-icon>
+              <span matListItemTitle>Techniciens</span>
+            </a>
         </ng-container>
 
         <!-- Menu Admin -->
-        <ng-container *ngIf="isAdmin()">
+          <ng-container *ngIf="isAdmin()">
           <mat-divider></mat-divider>
-          <h3 mat-subheader>Administration</h3>
+            <h3 mat-subheader [class.hidden]="isSidebarCollapsed">Administration</h3>
           
-          <a mat-list-item routerLink="/users" routerLinkActive="active">
-            <mat-icon>admin_panel_settings</mat-icon>
-            <span>Gestion utilisateurs</span>
-          </a>
-          
-          <a mat-list-item routerLink="/system" routerLinkActive="active">
-            <mat-icon>settings</mat-icon>
-            <span>Configuration</span>
-          </a>
+                        <a mat-list-item routerLink="/users" routerLinkActive="active" [class.icon-only]="isSidebarCollapsed"
+               [matTooltip]="isSidebarCollapsed ? 'Gestion utilisateurs' : ''" matTooltipPosition="right">
+              <mat-icon matListItemIcon>admin_panel_settings</mat-icon>
+              <span matListItemTitle>Gestion utilisateurs</span>
+            </a>
+            
+            <a mat-list-item routerLink="/system" routerLinkActive="active" [class.icon-only]="isSidebarCollapsed"
+               [matTooltip]="isSidebarCollapsed ? 'Configuration' : ''" matTooltipPosition="right">
+              <mat-icon matListItemIcon>settings</mat-icon>
+              <span matListItemTitle>Configuration</span>
+            </a>
         </ng-container>
 
         <!-- Menu Technicien -->
-        <ng-container *ngIf="isTechnician()">
+          <ng-container *ngIf="isTechnician()">
           <mat-divider></mat-divider>
-          <h3 mat-subheader>Traitement</h3>
+            <h3 mat-subheader [class.hidden]="isSidebarCollapsed">Traitement</h3>
           
-          <a mat-list-item routerLink="/assigned-tickets" routerLinkActive="active">
-            <mat-icon>work</mat-icon>
-            <span>Tickets assignés</span>
-          </a>
+            <a mat-list-item routerLink="/assigned-tickets" routerLinkActive="active" [class.icon-only]="isSidebarCollapsed"
+               [matTooltip]="isSidebarCollapsed ? 'Tickets assignés' : ''" matTooltipPosition="right">
+              <mat-icon matListItemIcon>work</mat-icon>
+              <span matListItemTitle>Tickets assignés</span>
+            </a>
         </ng-container>
 
-        <!-- Recherche -->
-        <mat-divider></mat-divider>
-        <a mat-list-item routerLink="/search" routerLinkActive="active">
-          <mat-icon>search</mat-icon>
-          <span>Recherche</span>
-        </a>
 
         <!-- Aide -->
-        <a mat-list-item routerLink="/help" routerLinkActive="active">
-          <mat-icon>help</mat-icon>
-          <span>Aide</span>
-        </a>
+          <a mat-list-item routerLink="/help" routerLinkActive="active" [class.icon-only]="isSidebarCollapsed"
+             [matTooltip]="isSidebarCollapsed ? 'Aide' : ''" matTooltipPosition="right">
+            <mat-icon matListItemIcon>help</mat-icon>
+            <span matListItemTitle>Aide</span>
+          </a>
       </mat-nav-list>
     </mat-sidenav>
 
@@ -126,4 +143,9 @@
       </div>
     </mat-sidenav-content>
   </mat-sidenav-container>
+  <ng-template #authContent>
+    <div class="auth-content">
+      <router-outlet></router-outlet>
+    </div>
+  </ng-template>
 </div>

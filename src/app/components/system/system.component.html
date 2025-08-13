@@ -1,36 +1,103 @@
-<div class="page-header">
-  <h2>Configuration</h2>
-  <button mat-stroked-button color="primary" (click)="save()"><mat-icon>save</mat-icon> Sauvegarder</button>
+<div class="system-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Configuration du système</h1>
+      <p class="header-subtitle">Gérez vos préférences et paramètres d'application</p>
+    </div>
+    <button mat-raised-button color="primary" (click)="save()" class="save-btn">
+      <mat-icon>save</mat-icon>
+      Sauvegarder
+    </button>
+  </div>
+
+  <!-- Configuration Cards -->
+  <div class="config-grid">
+    <!-- Preferences Card -->
+    <mat-card class="config-card preferences-card">
+      <mat-card-header>
+        <div mat-card-avatar class="card-avatar preferences-avatar">
+          <mat-icon>tune</mat-icon>
+        </div>
+        <mat-card-title>Préférences générales</mat-card-title>
+        <mat-card-subtitle>Personnalisez l'apparence et la langue de l'application</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <form [formGroup]="form" class="preferences-form">
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="theme-field">
+              <mat-label>Thème</mat-label>
+              <mat-select formControlName="theme">
+                <mat-option value="clair">Clair</mat-option>
+                <mat-option value="sombre">Sombre</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="language-field">
+              <mat-label>Langue</mat-label>
+              <mat-select formControlName="language">
+                <mat-option value="fr">Français</mat-option>
+                <mat-option value="en">English</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Notifications Card -->
+    <mat-card class="config-card notifications-card">
+      <mat-card-header>
+        <div mat-card-avatar class="card-avatar notifications-avatar">
+          <mat-icon>notifications</mat-icon>
+        </div>
+        <mat-card-title>Notifications</mat-card-title>
+        <mat-card-subtitle>Configurez vos préférences de notification</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="notifications-settings">
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>Activer les notifications</h4>
+              <p>Recevoir des notifications pour les nouveaux tickets</p>
+            </div>
+            <mat-slide-toggle formControlName="notifications" color="primary"></mat-slide-toggle>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+
+
+    <!-- System Info Card -->
+    <mat-card class="config-card system-info-card">
+      <mat-card-header>
+        <div mat-card-avatar class="card-avatar system-avatar">
+          <mat-icon>info</mat-icon>
+        </div>
+        <mat-card-title>Informations système</mat-card-title>
+        <mat-card-subtitle>Détails sur l'application et les performances</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="system-info">
+          <div class="info-item">
+            <mat-icon>apartment</mat-icon>
+            <div class="info-content">
+              <strong>Version</strong>
+              <span>SGI v2.1.4</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Status Bar -->
+  <div class="status-bar" *ngIf="lastSaved">
+    <mat-icon>check_circle</mat-icon>
+    <span>Dernière sauvegarde : {{ lastSaved | date:'short' }}</span>
+  </div>
 </div>
-
-<form [formGroup]="form" class="grid">
-  <mat-card>
-    <mat-card-title>Préférences générales</mat-card-title>
-    <mat-card-content>
-      <mat-form-field appearance="outline" style="width: 200px;">
-        <mat-label>Thème</mat-label>
-        <mat-select formControlName="theme">
-          <mat-option value="clair">Clair</mat-option>
-          <mat-option value="sombre">Sombre</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" style="width: 200px; margin-left: 16px;">
-        <mat-label>Langue</mat-label>
-        <mat-select formControlName="language">
-          <mat-option value="fr">Français</mat-option>
-          <mat-option value="en">English</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </mat-card-content>
-  </mat-card>
-
-  <mat-card>
-    <mat-card-title>Notifications</mat-card-title>
-    <mat-card-content>
-      <mat-slide-toggle formControlName="notifications">Activer les notifications</mat-slide-toggle>
-    </mat-card-content>
-  </mat-card>
-</form>
-
-

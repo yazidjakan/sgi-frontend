@@ -144,26 +144,20 @@
 
 /* ===== Modernized layout (new structure) ===== */
 .login-wrapper {
-  height: calc(100vh - 64px);
+  height: 100vh;
   display: grid;
-  grid-template-columns: 1fr 480px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
   align-items: center;
-  padding: 40px 24px;
+  justify-items: center;
+  padding: 24px;
   background: linear-gradient(180deg, rgba(247,249,252,.6) 0%, rgba(238,242,247,.6) 100%), url('/assets/images/background-login-page.jpg');
   background-size: cover;
   background-position: center;
   overflow: hidden;
 }
 
-.hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  color: #fff;
-  gap: 6px;
-}
+.hero { display: none; }
 
 .hero-logo {
   width: 240px;
@@ -199,8 +193,15 @@
   padding: 28px;
   border: 1px solid #e5e7eb;
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
-  max-height: 80vh;
-  overflow: auto;
+  width: 100%;
+  max-width: 480px;
+}
+
+.panel-logo {
+  width: 140px;
+  height: auto;
+  display: block;
+  margin: 0 auto 12px auto;
 }
 
 .panel-header h2 {
@@ -234,6 +235,5 @@
 
 /* Responsive */
 @media (max-width: 1024px) {
-  .login-wrapper { grid-template-columns: 1fr; padding: 24px 16px; height: calc(100vh - 64px); }
-  .hero { order: -1; }
+  .login-wrapper { grid-template-columns: 1fr; padding: 24px 16px; }
 }

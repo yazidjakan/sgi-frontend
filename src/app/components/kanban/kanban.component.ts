@@ -2,7 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { IncidentService } from '../../services/incident.service';
 import { Incident, StatutIncident, NiveauPriorite, STATUS_LABELS, PRIORITY_LABELS, STATUS_COLORS, PRIORITY_COLORS } from '../../models/incident.model';
+import { User } from '../../models/user.model';
+import { UserService } from '../../services/user.service';
 import { ToastrService } from 'ngx-toastr';
+import { MatDialog } from '@angular/material/dialog';
+import { TicketDialogComponent } from './ticket-dialog.component';
 import * as moment from 'moment';
 
 @Component({
@@ -18,10 +22,22 @@ export class KanbanComponent implements OnInit {
   aValider: Incident[] = [];
   resolu: Incident[] = [];
   loading = true;
+  isOver: { [key: string]: boolean } = {
+    backlog: false,
+    ouvert: false,
+    enCours: false,
+    aValider: false,
+    resolu: false
+  };
+  searchTerm = '';
+
+  userIdToUser: { [id: number]: User } = {};
 
   constructor(
     private incidentService: IncidentService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private userService: UserService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -34,11 +50,28 @@ export class KanbanComponent implements OnInit {
       next: (incidents) => {
         this.incidents = incidents;
         this.categorizeIncidents();
-        this.loading = false;
+        this.loadUsersForDisplay();
       },
       error: (error) => {
         console.error('Erreur lors du chargement des incidents:', error);
         this.toastr.error('Erreur lors du chargement des incidents');
+        this.loading = false;
+      }
+    });
+  }
+
+  private loadUsersForDisplay(): void {
+    // Load users once and keep in a map for fast lookup
+    this.userService.getUsers().subscribe({
+      next: (users) => {
+        this.userIdToUser = users.reduce((map: { [id: number]: User }, user: User) => {
+          map[user.id] = user;
+          return map;
+        }, {});
+        this.loading = false;
+      },
+      error: () => {
+        // Even if users cannot be loaded, continue showing incidents
         this.loading = false;
       }
     });
@@ -68,6 +101,8 @@ export class KanbanComponent implements OnInit {
       
       this.updateIncidentStatus(incident.id!, newStatus);
     }
+    // Clear highlight on drop
+    this.clearOverState();
   }
 
   private getStatusFromContainer(containerId: string): StatutIncident {
@@ -116,6 +151,74 @@ export class KanbanComponent implements OnInit {
     return STATUS_LABELS[status] || status;
   }
 
+  getAssignee(incident: Incident): User | undefined {
+    const userId = incident.assignedTechnicianId ?? incident.reporterId;
+    return userId ? this.userIdToUser[userId] : undefined;
+  }
+
+  getAssigneeName(incident: Incident): string {
+    const user = this.getAssignee(incident);
+    return user ? user.nom : 'Non assigné';
+  }
+
+  getAssigneeInitials(incident: Incident): string {
+    const name = this.getAssigneeName(incident);
+    if (!name || name === 'Non assigné') return '?';
+    const parts = name.trim().split(/\s+/);
+    const first = parts[0]?.charAt(0) || '';
+    const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : '';
+    return (first + last).toUpperCase();
+  }
+
+  getAvatarColor(incident: Incident): string {
+    const user = this.getAssignee(incident);
+    const seed = user ? user.id : -1;
+    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#f97316'];
+    const index = seed >= 0 ? seed % colors.length : 0;
+    return colors[index];
+  }
+
+  onListEntered(listId: string): void {
+    this.isOver[listId] = true;
+  }
+
+  onListExited(listId: string): void {
+    this.isOver[listId] = false;
+  }
+
+  private clearOverState(): void {
+    Object.keys(this.isOver).forEach(k => (this.isOver[k] = false));
+  }
+
+
+
+  onSearch(term: string): void {
+    this.searchTerm = term || '';
+    // No need to mutate arrays; template filters render only matches
+  }
+
+  matchesSearch(incident: Incident): boolean {
+    const term = (this.searchTerm || '').toLowerCase().trim();
+    if (!term) return true;
+    const title = (incident.title || '').toLowerCase();
+    const description = (incident.description || '').toLowerCase();
+    const type = (incident.incidentType || '').toLowerCase();
+    const idText = `#${incident.id ?? ''}`.toLowerCase();
+    const assignee = (this.getAssigneeName(incident) || '').toLowerCase();
+    return (
+      title.includes(term) ||
+      description.includes(term) ||
+      type.includes(term) ||
+      idText.includes(term) ||
+      assignee.includes(term)
+    );
+  }
+
+  getFilteredCount(columnId: 'backlog'|'ouvert'|'enCours'|'aValider'|'resolu'): number {
+    const list = this[columnId] as Incident[];
+    return list.reduce((count, inc) => count + (this.matchesSearch(inc) ? 1 : 0), 0);
+  }
+
   formatDate(date: Date | string | undefined): string {
     if (!date) return '';
     return moment(date).format('DD/MM/YYYY HH:mm');
@@ -127,7 +230,16 @@ export class KanbanComponent implements OnInit {
   }
 
   createTicket(): void {
-    // TODO: Implement ticket creation modal/form
-    this.toastr.info('Fonctionnalité de création de ticket à implémenter');
+    const ref = this.dialog.open(TicketDialogComponent, {
+      width: '520px',
+      data: { defaultStatus: StatutIncident.BACKLOG }
+    });
+    ref.afterClosed().subscribe((created?: Incident) => {
+      if (created) {
+        this.toastr.success('Incident créé');
+        this.incidents.unshift(created);
+        this.categorizeIncidents();
+      }
+    });
   }
 }

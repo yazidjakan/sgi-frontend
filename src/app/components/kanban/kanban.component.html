@@ -1,14 +1,16 @@
 <div class="kanban-container">
   <div class="kanban-header">
     <div class="title">
-      <img src="assets/images/sgi-logo.png" alt="logo"/>
       <h2>Tableau Kanban</h2>
     </div>
     <div class="actions">
       <mat-form-field appearance="outline" class="search">
         <mat-label>Rechercher</mat-label>
-        <input matInput placeholder="Titre, #ID, type..."/>
-        <mat-icon matSuffix>search</mat-icon>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput placeholder="Titre, description, assigné, #ID..." [(ngModel)]="searchTerm" (ngModelChange)="onSearch($event)"/>
+        <button mat-icon-button matSuffix (click)="onSearch('')" [disabled]="!searchTerm" aria-label="Effacer la recherche">
+          <mat-icon>{{ searchTerm ? 'close' : 'search' }}</mat-icon>
+        </button>
       </mat-form-field>
       <button mat-flat-button color="primary" (click)="createTicket()">
         <mat-icon>add</mat-icon>
@@ -22,17 +24,22 @@
     <div class="kanban-column">
       <div class="column-header backlog">
         <h3>Backlog</h3>
-        <span class="count">{{ backlog.length }}</span>
+        <span class="count">{{ getFilteredCount('backlog') }}</span>
       </div>
       <div class="column-content" 
            cdkDropList 
            id="backlog"
            [cdkDropListData]="backlog"
            [cdkDropListConnectedTo]="['ouvert', 'enCours', 'aValider', 'resolu']"
-           (cdkDropListDropped)="onDrop($event)">
+           (cdkDropListDropped)="onDrop($event)"
+           (cdkDropListEntered)="onListEntered('backlog')"
+           (cdkDropListExited)="onListExited('backlog')"
+           [ngClass]="{ 'is-over': isOver['backlog'] }">
         <div class="ticket-card" 
-             *ngFor="let incident of backlog" 
+             *ngFor="let incident of backlog | slice:0; let i = index" 
+             [style.display]="matchesSearch(incident) ? 'block' : 'none'"
              cdkDrag>
+          <div class="drag-handle" cdkDragHandle><mat-icon>drag_indicator</mat-icon></div>
           <div class="ticket-header">
             <span class="priority-badge" 
                   [style.background-color]="getPriorityColor(incident.priority)">
@@ -41,12 +48,12 @@
             <span class="ticket-id">#{{ incident.id }}</span>
           </div>
           <div class="ticket-title">{{ incident.title }}</div>
-          <div class="ticket-description" *ngIf="incident.description">
-            {{ incident.description | slice:0:100 }}{{ incident.description.length > 100 ? '...' : '' }}
-          </div>
-          <div class="ticket-meta">
-            <span class="ticket-date">{{ formatDate(incident.creationDate) }}</span>
-            <span class="ticket-assignee">{{ incident.incidentType }}</span>
+          <div class="ticket-assignee-row">
+            <div class="avatar" [style.background]="getAvatarColor(incident)">{{ getAssigneeInitials(incident) }}</div>
+            <div class="assignee-and-date">
+              <div class="assignee-name">{{ getAssigneeName(incident) }}</div>
+              <div class="created-date">Créé le {{ formatDate(incident.creationDate) }}</div>
+            </div>
           </div>
         </div>
         <button class="add-card" mat-stroked-button color="primary" (click)="createTicket()"><mat-icon>add</mat-icon> Ajouter</button>
@@ -57,17 +64,22 @@
     <div class="kanban-column">
       <div class="column-header ouvert">
         <h3>Ouvert</h3>
-        <span class="count">{{ ouvert.length }}</span>
+        <span class="count">{{ getFilteredCount('ouvert') }}</span>
       </div>
       <div class="column-content" 
            cdkDropList 
            id="ouvert"
            [cdkDropListData]="ouvert"
            [cdkDropListConnectedTo]="['backlog', 'enCours', 'aValider', 'resolu']"
-           (cdkDropListDropped)="onDrop($event)">
+           (cdkDropListDropped)="onDrop($event)"
+           (cdkDropListEntered)="onListEntered('ouvert')"
+           (cdkDropListExited)="onListExited('ouvert')"
+           [ngClass]="{ 'is-over': isOver['ouvert'] }">
         <div class="ticket-card" 
-             *ngFor="let incident of ouvert" 
+             *ngFor="let incident of ouvert | slice:0; let i = index" 
+             [style.display]="matchesSearch(incident) ? 'block' : 'none'"
              cdkDrag>
+          <div class="drag-handle" cdkDragHandle><mat-icon>drag_indicator</mat-icon></div>
           <div class="ticket-header">
             <span class="priority-badge" 
                   [style.background-color]="getPriorityColor(incident.priority)">
@@ -76,12 +88,12 @@
             <span class="ticket-id">#{{ incident.id }}</span>
           </div>
           <div class="ticket-title">{{ incident.title }}</div>
-          <div class="ticket-description" *ngIf="incident.description">
-            {{ incident.description | slice:0:100 }}{{ incident.description.length > 100 ? '...' : '' }}
-          </div>
-          <div class="ticket-meta">
-            <span class="ticket-date">{{ formatDate(incident.creationDate) }}</span>
-            <span class="ticket-assignee">{{ incident.incidentType }}</span>
+          <div class="ticket-assignee-row">
+            <div class="avatar" [style.background]="getAvatarColor(incident)">{{ getAssigneeInitials(incident) }}</div>
+            <div class="assignee-and-date">
+              <div class="assignee-name">{{ getAssigneeName(incident) }}</div>
+              <div class="created-date">Créé le {{ formatDate(incident.creationDate) }}</div>
+            </div>
           </div>
         </div>
         <button class="add-card" mat-stroked-button color="primary" (click)="createTicket()"><mat-icon>add</mat-icon> Ajouter</button>
@@ -92,17 +104,22 @@
     <div class="kanban-column">
       <div class="column-header en-cours">
         <h3>En cours</h3>
-        <span class="count">{{ enCours.length }}</span>
+        <span class="count">{{ getFilteredCount('enCours') }}</span>
       </div>
       <div class="column-content" 
            cdkDropList 
            id="enCours"
            [cdkDropListData]="enCours"
            [cdkDropListConnectedTo]="['backlog', 'ouvert', 'aValider', 'resolu']"
-           (cdkDropListDropped)="onDrop($event)">
+           (cdkDropListDropped)="onDrop($event)"
+           (cdkDropListEntered)="onListEntered('enCours')"
+           (cdkDropListExited)="onListExited('enCours')"
+           [ngClass]="{ 'is-over': isOver['enCours'] }">
         <div class="ticket-card" 
-             *ngFor="let incident of enCours" 
+             *ngFor="let incident of enCours | slice:0; let i = index" 
+             [style.display]="matchesSearch(incident) ? 'block' : 'none'"
              cdkDrag>
+          <div class="drag-handle" cdkDragHandle><mat-icon>drag_indicator</mat-icon></div>
           <div class="ticket-header">
             <span class="priority-badge" 
                   [style.background-color]="getPriorityColor(incident.priority)">
@@ -111,12 +128,12 @@
             <span class="ticket-id">#{{ incident.id }}</span>
           </div>
           <div class="ticket-title">{{ incident.title }}</div>
-          <div class="ticket-description" *ngIf="incident.description">
-            {{ incident.description | slice:0:100 }}{{ incident.description.length > 100 ? '...' : '' }}
-          </div>
-          <div class="ticket-meta">
-            <span class="ticket-date">{{ formatDate(incident.creationDate) }}</span>
-            <span class="ticket-assignee">{{ incident.incidentType }}</span>
+          <div class="ticket-assignee-row">
+            <div class="avatar" [style.background]="getAvatarColor(incident)">{{ getAssigneeInitials(incident) }}</div>
+            <div class="assignee-and-date">
+              <div class="assignee-name">{{ getAssigneeName(incident) }}</div>
+              <div class="created-date">Créé le {{ formatDate(incident.creationDate) }}</div>
+            </div>
           </div>
         </div>
         <button class="add-card" mat-stroked-button color="primary" (click)="createTicket()"><mat-icon>add</mat-icon> Ajouter</button>
@@ -127,17 +144,22 @@
     <div class="kanban-column">
       <div class="column-header a-valider">
         <h3>À valider</h3>
-        <span class="count">{{ aValider.length }}</span>
+        <span class="count">{{ getFilteredCount('aValider') }}</span>
       </div>
       <div class="column-content" 
            cdkDropList 
            id="aValider"
            [cdkDropListData]="aValider"
            [cdkDropListConnectedTo]="['backlog', 'ouvert', 'enCours', 'resolu']"
-           (cdkDropListDropped)="onDrop($event)">
+           (cdkDropListDropped)="onDrop($event)"
+           (cdkDropListEntered)="onListEntered('aValider')"
+           (cdkDropListExited)="onListExited('aValider')"
+           [ngClass]="{ 'is-over': isOver['aValider'] }">
         <div class="ticket-card" 
-             *ngFor="let incident of aValider" 
+             *ngFor="let incident of aValider | slice:0; let i = index" 
+             [style.display]="matchesSearch(incident) ? 'block' : 'none'"
              cdkDrag>
+          <div class="drag-handle" cdkDragHandle><mat-icon>drag_indicator</mat-icon></div>
           <div class="ticket-header">
             <span class="priority-badge" 
                   [style.background-color]="getPriorityColor(incident.priority)">
@@ -146,12 +168,12 @@
             <span class="ticket-id">#{{ incident.id }}</span>
           </div>
           <div class="ticket-title">{{ incident.title }}</div>
-          <div class="ticket-description" *ngIf="incident.description">
-            {{ incident.description | slice:0:100 }}{{ incident.description.length > 100 ? '...' : '' }}
-          </div>
-          <div class="ticket-meta">
-            <span class="ticket-date">{{ formatDate(incident.creationDate) }}</span>
-            <span class="ticket-assignee">{{ incident.incidentType }}</span>
+          <div class="ticket-assignee-row">
+            <div class="avatar" [style.background]="getAvatarColor(incident)">{{ getAssigneeInitials(incident) }}</div>
+            <div class="assignee-and-date">
+              <div class="assignee-name">{{ getAssigneeName(incident) }}</div>
+              <div class="created-date">Créé le {{ formatDate(incident.creationDate) }}</div>
+            </div>
           </div>
         </div>
         <button class="add-card" mat-stroked-button color="primary" (click)="createTicket()"><mat-icon>add</mat-icon> Ajouter</button>
@@ -162,17 +184,22 @@
     <div class="kanban-column">
       <div class="column-header resolu">
         <h3>Résolu</h3>
-        <span class="count">{{ resolu.length }}</span>
+        <span class="count">{{ getFilteredCount('resolu') }}</span>
       </div>
       <div class="column-content" 
            cdkDropList 
            id="resolu"
            [cdkDropListData]="resolu"
            [cdkDropListConnectedTo]="['backlog', 'ouvert', 'enCours', 'aValider']"
-           (cdkDropListDropped)="onDrop($event)">
+           (cdkDropListDropped)="onDrop($event)"
+           (cdkDropListEntered)="onListEntered('resolu')"
+           (cdkDropListExited)="onListExited('resolu')"
+           [ngClass]="{ 'is-over': isOver['resolu'] }">
         <div class="ticket-card" 
-             *ngFor="let incident of resolu" 
+             *ngFor="let incident of resolu | slice:0; let i = index" 
+             [style.display]="matchesSearch(incident) ? 'block' : 'none'"
              cdkDrag>
+          <div class="drag-handle" cdkDragHandle><mat-icon>drag_indicator</mat-icon></div>
           <div class="ticket-header">
             <span class="priority-badge" 
                   [style.background-color]="getPriorityColor(incident.priority)">
@@ -181,12 +208,12 @@
             <span class="ticket-id">#{{ incident.id }}</span>
           </div>
           <div class="ticket-title">{{ incident.title }}</div>
-          <div class="ticket-description" *ngIf="incident.description">
-            {{ incident.description | slice:0:100 }}{{ incident.description.length > 100 ? '...' : '' }}
-          </div>
-          <div class="ticket-meta">
-            <span class="ticket-date">{{ formatDate(incident.resolutionDate) }}</span>
-            <span class="ticket-assignee">{{ incident.incidentType }}</span>
+          <div class="ticket-assignee-row">
+            <div class="avatar" [style.background]="getAvatarColor(incident)">{{ getAssigneeInitials(incident) }}</div>
+            <div class="assignee-and-date">
+              <div class="assignee-name">{{ getAssigneeName(incident) }}</div>
+              <div class="created-date">Créé le {{ formatDate(incident.creationDate) }}</div>
+            </div>
           </div>
         </div>
         <button class="add-card" mat-stroked-button color="primary" (click)="createTicket()"><mat-icon>add</mat-icon> Ajouter</button>

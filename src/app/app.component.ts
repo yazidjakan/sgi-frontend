@@ -11,6 +11,7 @@ import { UserDto } from './models/auth.model';
 export class AppComponent {
   title = 'SGI - Système de Gestion des Incidents';
   currentUser: UserDto | null = null;
+  isSidebarCollapsed = false;
 
   constructor(private authService: AuthService, private router: Router) {
     this.authService.currentUser.subscribe(user => {
@@ -44,5 +45,22 @@ export class AppComponent {
 
   goDashboard(): void {
     this.router.navigate(['/dashboard']);
+  }
+
+  isAuthRoute(): boolean {
+    const url = this.router.url;
+    return url.startsWith('/login') || url.startsWith('/register');
+  }
+
+  toggleSidebar(): void {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
+  }
+
+  openProfile(): void {
+    this.router.navigate(['/profile']);
+  }
+
+  openSettings(): void {
+    this.router.navigate(['/system']);
   }
 }

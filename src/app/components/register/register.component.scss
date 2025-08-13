@@ -1,40 +1,50 @@
 .register-container {
-  display: grid;
-  grid-template-columns: 1fr 520px;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  height: calc(100vh - 120px);
+  min-height: 100vh;
   padding: 24px 16px;
   background: linear-gradient(180deg, rgba(247,249,252,.6) 0%, rgba(238,242,247,.6) 100%), url('/assets/images/background-login-page.jpg');
   background-size: cover;
   background-position: center;
-  overflow: hidden;
 }
-  .register-card {
-    width: 100%;
-    max-width: 520px;
-    background: #fff;
-    padding: 24px;
-    border-radius: 12px;
-    box-shadow: 0 6px 28px rgba(0,0,0,.08);
-    max-height: 82vh;
-    overflow: auto;
-  }
+
+.register-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  width: 100%;
+  max-width: 480px;
+  max-height: 60vh; /* keep same visible size and enable scroll when needed */
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
 
 /* Embedded variant when used inside login page (to prevent nested background and extra scrollbars) */
 :host-context(.form-panel) .register-container {
   background: transparent;
   padding: 0;
   height: auto;
-  grid-template-columns: 1fr;
+  min-height: auto;
+  display: block;
 }
 
 :host-context(.form-panel) .register-card {
   box-shadow: none;
   border: none;
-  padding: 0;
-  max-height: none;
-  overflow: visible;
+  padding: 0; /* use the parent panel padding */
+  max-width: none; /* inherit from parent form-panel */
+  max-height: 60vh; /* keep panel size similar to login form */
+  overflow-y: auto; /* enable vertical scrolling for longer content */
+  overflow-x: hidden; /* prevent horizontal scrolling */
+  -webkit-overflow-scrolling: touch;
 }
+/* Hide internal title/intro when embedded inside the login panel to keep card height consistent */
+:host-context(.form-panel) .register-card > h1,
+:host-context(.form-panel) .register-card > p { display: none; }
   .full { width: 100%; }
   .spacer { height: 12px; }
   .alt { margin-top: 12px; font-size: 0.95rem; }

@@ -1,0 +1,41 @@
+<h2 mat-dialog-title>Nouvelle carte</h2>
+<form [formGroup]="form" (ngSubmit)="submit()" class="dialog-form">
+  <mat-dialog-content>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Titre</mat-label>
+      <input matInput formControlName="title" required />
+      <mat-error *ngIf="form.get('title')?.hasError('required')">Titre requis</mat-error>
+      <mat-error *ngIf="form.get('title')?.hasError('minlength')">Minimum 3 caractères</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Description</mat-label>
+      <textarea matInput rows="4" formControlName="description"></textarea>
+    </mat-form-field>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="half">
+        <mat-label>Priorité</mat-label>
+        <mat-select formControlName="priority" required>
+          <mat-option *ngFor="let p of priorities" [value]="p.value">{{ p.label }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half">
+        <mat-label>Assigné à</mat-label>
+        <mat-select formControlName="assigneeId">
+          <mat-option [value]="null">Non assigné</mat-option>
+          <mat-option *ngFor="let u of users" [value]="u.id">{{ u.nom }} ({{ u.email }})</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button type="button" (click)="cancel()">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || isSubmitting">
+      Créer
+    </button>
+  </mat-dialog-actions>
+</form>
+

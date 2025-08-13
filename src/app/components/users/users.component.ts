@@ -14,8 +14,10 @@ import { RoleDto, UserDto } from '../../models/auth.model';
 })
 export class UsersComponent implements OnInit {
   isLoading = false;
+  hidePassword = true;
   displayedColumns: string[] = ['username', 'email', 'roles', 'actions'];
   dataSource = new MatTableDataSource<UserDto>([]);
+  passwordStrength = { level: 'weak', percentage: 0, text: '' };
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -105,6 +107,38 @@ export class UsersComponent implements OnInit {
       next: () => { this.toastr.success('Utilisateur supprimé'); this.loadUsers(); },
       error: () => this.toastr.error('Échec de la suppression')
     });
+  }
+
+  checkPasswordStrength(event: any): void {
+    const password = event.target.value;
+    let score = 0;
+    let feedback = '';
+
+    if (password.length >= 8) score++;
+    if (password.match(/[a-z]/)) score++;
+    if (password.match(/[A-Z]/)) score++;
+    if (password.match(/[0-9]/)) score++;
+    if (password.match(/[^a-zA-Z0-9]/)) score++;
+
+    if (score <= 2) {
+      this.passwordStrength = {
+        level: 'weak',
+        percentage: 33,
+        text: 'Faible - Ajoutez des majuscules, chiffres et symboles'
+      };
+    } else if (score <= 3) {
+      this.passwordStrength = {
+        level: 'medium',
+        percentage: 66,
+        text: 'Moyen - Améliorez avec plus de caractères variés'
+      };
+    } else {
+      this.passwordStrength = {
+        level: 'strong',
+        percentage: 100,
+        text: 'Fort - Excellent mot de passe!'
+      };
+    }
   }
 }
 

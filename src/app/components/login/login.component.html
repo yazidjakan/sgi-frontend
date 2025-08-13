@@ -6,6 +6,7 @@
   </section>
 
   <section class="form-panel mat-elevation-z8">
+    <img src="assets/images/sgi-logo.png" alt="SGI Logo" class="panel-logo" />
     <ng-container *ngIf="!showRegister; else registerTpl">
     <header class="panel-header">
       <h2>
@@ -36,10 +37,7 @@
         </mat-error>
       </mat-form-field>
 
-      <div class="form-extras">
-        <mat-checkbox formControlName="rememberMe">Se souvenir de moi</mat-checkbox>
-        <a routerLink="/forgot-password" class="link">Mot de passe oublié ?</a>
-      </div>
+    
 
       <button mat-flat-button color="primary" type="submit" class="submit-btn" [disabled]="loginForm.invalid || loading">
         <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
