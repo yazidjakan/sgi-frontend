@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700;900&display=swap');
 /* Disable page scrolling on auth screens */
 html.auth-no-scroll,
 body.auth-no-scroll {
@@ -19,13 +19,14 @@ html, body { height: 100%; }
 html { font-size: 16px; }
 body { 
   margin: 0; 
-  font-family: 'Inter', Roboto, "Helvetica Neue", Arial, sans-serif; 
+  font-family: 'Lato', Roboto, "Helvetica Neue", Arial, sans-serif; 
   font-size: 1rem;
-  line-height: 1.5;
-  background-color: #f5f5f5;
+  line-height: 1.6;
+  background-color: #f8fafc;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.3s ease, color 0.3s ease;
+  color: #1e293b;
 }
 
 /* Theme Support */
@@ -35,17 +36,17 @@ body.dark-theme {
 }
 
 body.light-theme {
-  background-color: #f5f5f5;
-  color: #111827;
+  background-color: #f8fafc;
+  color: #1e293b;
 }
 
 /* Consistent typography scale */
 h1, h2, h3, h4, h5, h6 { 
-  font-family: 'Inter', Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: 'Lato', Roboto, "Helvetica Neue", Arial, sans-serif;
   font-weight: 600; 
   line-height: 1.2; 
   margin: 0 0 0.5rem 0; 
-  color: #111827; 
+  color: #1e293b; 
 }
 h1 { font-size: 2rem; }
 h2 { font-size: 1.5rem; }
@@ -55,7 +56,7 @@ h5 { font-size: 1rem; }
 h6 { font-size: 0.875rem; }
 
 p, li, label, input, textarea, button, span, a { 
-  font-family: 'Inter', Roboto, "Helvetica Neue", Arial, sans-serif; 
+  font-family: 'Lato', Roboto, "Helvetica Neue", Arial, sans-serif; 
 }
 
 /* Custom Snackbar Styles */
@@ -70,24 +71,24 @@ p, li, label, input, textarea, button, span, a {
 }
 
 .info-snackbar {
-  background-color: #3b82f6 !important;
+  background-color: #6f42c1 !important;
   color: white !important;
 }
 
 .mat-mdc-snack-bar-container .mdc-snackbar__surface {
-  border-radius: 8px !important;
+  border-radius: 12px !important;
 }
 
 /* Custom SGI Theme Colors */
 :root {
-  --sgi-primary: #673ab7;
-  --sgi-secondary: #ff9800;
-  --sgi-success: #4caf50;
-  --sgi-warning: #ff9800;
-  --sgi-danger: #f44336;
-  --sgi-info: #2196f3;
-  --sgi-light: #f8f9fa;
-  --sgi-dark: #343a40;
+  --sgi-primary: #6f42c1;
+  --sgi-secondary: #8b5cf6;
+  --sgi-success: #10b981;
+  --sgi-warning: #f59e0b;
+  --sgi-danger: #ef4444;
+  --sgi-info: #06b6d4;
+  --sgi-light: #f8fafc;
+  --sgi-dark: #1e293b;
 }
 
 /* SGI Logo Styles */
@@ -99,29 +100,30 @@ p, li, label, input, textarea, button, span, a {
 
 /* Custom Card Styles */
 .sgi-card {
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
   background: white;
   margin: 16px;
   padding: 16px;
+  border: 1px solid rgba(111, 66, 193, 0.08);
 }
 
 /* Status Colors */
-.status-backlog { color: #6c757d; }
-.status-ouvert { color: #007bff; }
-.status-en-cours { color: #ffc107; }
-.status-a-valider { color: #fd7e14; }
-.status-resolu { color: #28a745; }
+.status-backlog { color: #64748b; }
+.status-ouvert { color: #6f42c1; }
+.status-en-cours { color: #f59e0b; }
+.status-a-valider { color: #f97316; }
+.status-resolu { color: #10b981; }
 
 /* Priority Colors */
-.priority-critique { color: #dc3545; }
-.priority-elevee { color: #fd7e14; }
-.priority-moyenne { color: #ffc107; }
-.priority-faible { color: #28a745; }
+.priority-critique { color: #ef4444; }
+.priority-elevee { color: #f97316; }
+.priority-moyenne { color: #f59e0b; }
+.priority-faible { color: #10b981; }
 
 /* Dashboard KPI Cards */
 .kpi-card {
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 20px;
   margin: 10px;
   text-align: center;
@@ -129,10 +131,28 @@ p, li, label, input, textarea, button, span, a {
   font-weight: bold;
 }
 
-.kpi-card.success { background: linear-gradient(135deg, #4caf50, #45a049); }
-.kpi-card.warning { background: linear-gradient(135deg, #ff9800, #f57c00); }
-.kpi-card.danger { background: linear-gradient(135deg, #f44336, #d32f2f); }
-.kpi-card.info { background: linear-gradient(135deg, #2196f3, #1976d2); }
+.kpi-card.success { background: linear-gradient(135deg, #10b981, #059669); }
+.kpi-card.warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.kpi-card.danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.kpi-card.info { background: linear-gradient(135deg, #6f42c1, #8b5cf6); }
+
+/* Material Design Overrides */
+.mat-mdc-button, .mat-mdc-raised-button, .mat-mdc-stroked-button {
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  font-family: 'Lato', sans-serif !important;
+}
+
+.mat-mdc-card {
+  border-radius: 16px !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06) !important;
+  border: 1px solid rgba(111, 66, 193, 0.08) !important;
+}
+
+.mat-mdc-table {
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {

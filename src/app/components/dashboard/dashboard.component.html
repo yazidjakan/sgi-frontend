@@ -23,7 +23,7 @@
   <div class="kpi-grid" *ngIf="!loading">
     <div class="kpi-card info">
       <div class="kpi-icon">
-        <mat-icon>assignment</mat-icon>
+        <mat-icon>analytics</mat-icon>
       </div>
       <div class="kpi-content">
         <h3>{{ totalIncidents }}</h3>
@@ -43,7 +43,7 @@
 
     <div class="kpi-card warning">
       <div class="kpi-icon">
-        <mat-icon>pending</mat-icon>
+        <mat-icon>pending_actions</mat-icon>
       </div>
       <div class="kpi-content">
         <h3>{{ openIncidents }}</h3>
@@ -61,7 +61,7 @@
       </div>
     </div>
 
-    <div class="kpi-card info sla-compliance" [style.backgroundColor]="getComplianceColor(slaComplianceRate)">
+    <div class="kpi-card sla-compliance" [style.backgroundColor]="getComplianceColor(slaComplianceRate)">
       <div class="kpi-icon">
         <mat-icon>trending_up</mat-icon>
       </div>

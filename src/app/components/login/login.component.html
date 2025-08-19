@@ -1,61 +1,96 @@
-<div class="login-wrapper">
-  <section class="hero">
-    <img src="assets/images/sgi-logo.png" alt="SGI Logo" class="hero-logo" />
-    <h1>Bienvenue</h1>
-    <p class="tagline">Connectez-vous pour accéder à votre espace</p>
-  </section>
+<!-- Welcome title outside card -->
+ 
 
-  <section class="form-panel mat-elevation-z8">
-    <img src="assets/images/sgi-logo.png" alt="SGI Logo" class="panel-logo" />
-    <ng-container *ngIf="!showRegister; else registerTpl">
-    <header class="panel-header">
-      <h2>
-        <mat-icon>lock</mat-icon>
-        Se connecter
-      </h2>
-      <p class="register">Ou <a (click)="openRegister()" role="button" tabindex="0">Créer un nouveau compte</a></p>
-    </header>
+<div class="login-container" *ngIf="!showRegister; else registerTpl">
+  <!-- Left side - Login Form -->
+  <div class="login-card">
+    <div class="header-section">
+      <div class="logo-section">
+        <img src="assets/images/white.png" alt="SGI Logo" class="logo" />
+      </div>
+      <div class="welcome-section">
+         <p class="subtitle">Pour vous connecter à votre compte, renseignez votre nom d'utilisateur ainsi que votre mot de passe.</p>
+      </div>
+    </div>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Nom d'utilisateur</mat-label>
-        <input matInput formControlName="username" type="text" placeholder="Nom d'utilisateur" />
-        <mat-icon matSuffix>person</mat-icon>
-        <mat-error *ngIf="loginForm.get('username')?.invalid">
+      <div class="form-group">
+        <input 
+          matInput 
+          formControlName="username" 
+          type="text" 
+          placeholder="Nom d'utilisateur"
+          class="form-input"
+          [class.error]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
+        />
+        <div class="error-message" *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
           {{ getErrorMessage('username') }}
-        </mat-error>
-      </mat-form-field>
+        </div>
+      </div>
 
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Mot de passe</mat-label>
-        <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" />
-        <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button" aria-label="Afficher/Masquer le mot de passe">
+      <div class="form-group">
+        <input 
+          matInput 
+          [type]="hidePassword ? 'password' : 'text'" 
+          formControlName="password"
+          placeholder="Mot de passe"
+          class="form-input"
+          [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+        />
+        <button type="button" class="password-toggle" (click)="hidePassword = !hidePassword">
           <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
         </button>
-        <mat-error *ngIf="loginForm.get('password')?.invalid">
+        <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
           {{ getErrorMessage('password') }}
-        </mat-error>
-      </mat-form-field>
+        </div>
+      </div>
 
-    
+      <div class="forgot-password">
+        <a href="#" class="forgot-link">Mot de passe oublié?</a>
+      </div>
 
-      <button mat-flat-button color="primary" type="submit" class="submit-btn" [disabled]="loginForm.invalid || loading">
-        <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
-        <span *ngIf="!loading">Se Connecter</span>
+      <button type="submit" class="login-btn" [disabled]="loginForm.invalid || loading">
+        <mat-spinner diameter="20" *ngIf="loading" class="spinner"></mat-spinner>
+        <span *ngIf="!loading">Se connecter</span>
       </button>
     </form>
 
-    </ng-container>
+    <div class="footer-section">
+      <div class="copyright">
+        <p>All rights reserved SGI Technologies</p>
+      </div>
+    </div>
+  </div>
 
-    <ng-template #registerTpl>
-      <header class="panel-header">
-        <h2>
-          <mat-icon>person_add</mat-icon>
-          Créer un compte
-        </h2>
-        <p class="register">Déjà inscrit ? <a (click)="backToLogin()" role="button" tabindex="0">Se connecter</a></p>
-      </header>
-      <app-register (back)="backToLogin()" [embedded]="true"></app-register>
-    </ng-template>
-  </section>
+  <!-- Right side - Illustration -->
+  <div class="illustration-side">
+    <div class="illustration-content">
+      <div class="plant-container">
+        <img src="assets/images/ILUSS.svg" alt="Illustration" class="illustration-image" />
+      </div>
+      <div class="content-overlay">
+        <h3>Système de Gestion des Incidents</h3>
+        <p>Une plateforme moderne et intuitive pour la gestion efficace des incidents techniques.</p>
+        <div class="illustration-logo">
+          <img src="assets/images/sgi-logo.png" alt="SGI Logo" class="illustration-logo-img" />
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- Create account button outside card -->
+<div class="create-account-section" *ngIf="!showRegister">
+  <a href="#" class="create-account-btn" (click)="openRegister()">Créer un nouveau compte</a>
+</div>
+
+<ng-template #registerTpl>
+  <!-- Logo centered at top of page -->
+  <div class="page-logo-section">
+    <img src="assets/images/sgi-logo.png" alt="SGI Logo" class="page-logo" />
+  </div>
+  
+  <div class="register-container-embedded">
+    <app-register (back)="backToLogin()" [embedded]="true"></app-register>
+  </div>
+</ng-template>

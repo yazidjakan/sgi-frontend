@@ -141,17 +141,47 @@ export class DashboardComponent implements OnInit {
         datasets: [{
           label: 'Taux de résolution (%)',
           data: data,
-          backgroundColor: 'rgba(54, 162, 235, 0.8)',
-          borderColor: 'rgba(54, 162, 235, 1)',
-          borderWidth: 1
+          backgroundColor: 'rgba(111, 66, 193, 0.8)',
+          borderColor: 'rgba(111, 66, 193, 1)',
+          borderWidth: 2,
+          borderRadius: 8,
+          borderSkipped: false,
         }]
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
         scales: {
           y: {
             beginAtZero: true,
-            max: 100
+            max: 100,
+            grid: {
+              color: 'rgba(111, 66, 193, 0.1)'
+            },
+            ticks: {
+              color: '#64748b',
+              font: {
+                family: 'Inter',
+                size: 12
+              }
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            },
+            ticks: {
+              color: '#64748b',
+              font: {
+                family: 'Inter',
+                size: 12
+              }
+            }
           }
         }
       }
@@ -173,17 +203,30 @@ export class DashboardComponent implements OnInit {
         datasets: [{
           data: data,
           backgroundColor: colors,
-          borderWidth: 2,
-          borderColor: '#fff'
+          borderWidth: 3,
+          borderColor: '#ffffff',
+          hoverBorderWidth: 4,
+          hoverBorderColor: '#ffffff'
         }]
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: {
-            position: 'bottom'
+            position: 'bottom',
+            labels: {
+              padding: 20,
+              usePointStyle: true,
+              font: {
+                family: 'Inter',
+                size: 12
+              },
+              color: '#64748b'
+            }
           }
-        }
+        },
+        cutout: '60%'
       }
     });
   }
@@ -213,16 +256,51 @@ export class DashboardComponent implements OnInit {
         datasets: [{
           label: 'Incidents créés',
           data: incidentCounts,
-          borderColor: 'rgba(255, 99, 132, 1)',
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          tension: 0.4
+          borderColor: '#6f42c1',
+          backgroundColor: 'rgba(111, 66, 193, 0.1)',
+          borderWidth: 3,
+          tension: 0.4,
+          fill: true,
+          pointBackgroundColor: '#6f42c1',
+          pointBorderColor: '#ffffff',
+          pointBorderWidth: 2,
+          pointRadius: 6,
+          pointHoverRadius: 8
         }]
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
         scales: {
           y: {
-            beginAtZero: true
+            beginAtZero: true,
+            grid: {
+              color: 'rgba(111, 66, 193, 0.1)'
+            },
+            ticks: {
+              color: '#64748b',
+              font: {
+                family: 'Inter',
+                size: 12
+              }
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            },
+            ticks: {
+              color: '#64748b',
+              font: {
+                family: 'Inter',
+                size: 12
+              }
+            }
           }
         }
       }

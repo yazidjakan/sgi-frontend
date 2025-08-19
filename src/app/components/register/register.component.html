@@ -1,69 +1,126 @@
+ 
 <div class="register-container">
-    <div class="register-card form-panel">
-      <h1>Créer un compte</h1>
-      <p>Rejoignez SGI pour gérer vos incidents</p>
-  
-      <form [formGroup]="form" (ngSubmit)="submit()">
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Nom d’utilisateur</mat-label>
-          <input matInput formControlName="username" />
-          <mat-error *ngIf="f['username'].invalid && f['username'].touched">
-            {{ f['username'].hasError('required') ? 'Requis' : 'Au moins 3 caractères' }}
-          </mat-error>
-        </mat-form-field>
-  
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Email</mat-label>
-          <input matInput type="email" formControlName="email" />
-          <mat-error *ngIf="f['email'].invalid && f['email'].touched">
-            {{ f['email'].hasError('required') ? 'Requis' : 'Email invalide' }}
-          </mat-error>
-        </mat-form-field>
-  
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Mot de passe</mat-label>
-          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" />
-          <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
-            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-          </button>
-          <mat-error *ngIf="f['password'].invalid && f['password'].touched">
-            Mot de passe trop court
-          </mat-error>
-        </mat-form-field>
-  
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Confirmer le mot de passe</mat-label>
-          <input matInput [type]="hideConfirm ? 'password' : 'text'" formControlName="confirmPassword" />
-          <button mat-icon-button matSuffix type="button" (click)="hideConfirm = !hideConfirm">
-            <mat-icon>{{ hideConfirm ? 'visibility_off' : 'visibility' }}</mat-icon>
-          </button>
-          <mat-error *ngIf="form.hasError('passwordMismatch') && f['confirmPassword'].touched">
-            Les mots de passe ne correspondent pas
-          </mat-error>
-        </mat-form-field>
+  <!-- Left side - Register Form -->
+  <div class="register-card">
+    <div class="header-section">
+      <div class="logo-section">
+        <img src="assets/images/white.png" alt="SGI Logo" class="logo" />
+      </div>
+      <div class="welcome-section">
+         <p class="subtitle">Créez votre compte pour accéder au système de gestion des incidents SGI.</p>
+      </div>
+    </div>
 
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Rôle</mat-label>
-          <mat-select formControlName="role">
-            <mat-option value="ROLE_USER">Utilisateur</mat-option>
-            <mat-option value="ROLE_TECHNICIAN">Technicien</mat-option>
-            <mat-option value="ROLE_MANAGER">Manager</mat-option>
-          </mat-select>
-        </mat-form-field>
-  
-        <mat-checkbox formControlName="acceptTerms">
-          J’accepte les conditions d’utilisation
-        </mat-checkbox>
-        <div class="spacer"></div>
-  
-        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || loading">
-          <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
-          <span *ngIf="!loading">Créer mon compte</span>
-        </button>
-  
-        <div class="alt">
-          Déjà inscrit ? <a (click)="openLogin()" role="button" tabindex="0">Se connecter</a>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="register-form">
+      <div class="form-group">
+        <input 
+          matInput 
+          formControlName="username" 
+          type="text" 
+          placeholder="Nom d'utilisateur"
+          class="form-input"
+          [class.error]="f['username'].invalid && f['username'].touched"
+        />
+        <div class="error-message" *ngIf="f['username'].invalid && f['username'].touched">
+          {{ f['username'].hasError('required') ? 'Requis' : 'Au moins 3 caractères' }}
         </div>
-      </form>
+      </div>
+
+      <div class="form-group">
+        <input 
+          matInput 
+          formControlName="email" 
+          type="email" 
+          placeholder="Email"
+          class="form-input"
+          [class.error]="f['email'].invalid && f['email'].touched"
+        />
+        <div class="error-message" *ngIf="f['email'].invalid && f['email'].touched">
+          {{ f['email'].hasError('required') ? 'Requis' : 'Email invalide' }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <input 
+          matInput 
+          [type]="hidePassword ? 'password' : 'text'" 
+          formControlName="password"
+          placeholder="Mot de passe"
+          class="form-input"
+          [class.error]="f['password'].invalid && f['password'].touched"
+        />
+        <button type="button" class="password-toggle" (click)="hidePassword = !hidePassword">
+          <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <div class="error-message" *ngIf="f['password'].invalid && f['password'].touched">
+          Mot de passe trop court
+        </div>
+      </div>
+
+      <div class="form-group">
+        <input 
+          matInput 
+          [type]="hideConfirm ? 'password' : 'text'" 
+          formControlName="confirmPassword"
+          placeholder="Confirmer le mot de passe"
+          class="form-input"
+          [class.error]="form.hasError('passwordMismatch') && f['confirmPassword'].touched"
+        />
+        <button type="button" class="password-toggle" (click)="hideConfirm = !hideConfirm">
+          <mat-icon>{{ hideConfirm ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <div class="error-message" *ngIf="form.hasError('passwordMismatch') && f['confirmPassword'].touched">
+          Les mots de passe ne correspondent pas
+        </div>
+      </div>
+
+      <div class="form-group">
+        <select formControlName="role" class="form-input form-select">
+          <option value="" disabled>Sélectionner un rôle</option>
+          <option value="ROLE_USER">Utilisateur</option>
+          <option value="ROLE_TECHNICIAN">Technicien</option>
+          <option value="ROLE_MANAGER">Manager</option>
+        </select>
+      </div>
+
+      <div class="checkbox-group">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="acceptTerms" class="checkbox-input">
+          <span class="checkbox-text">J'accepte les conditions d'utilisation</span>
+        </label>
+      </div>
+
+      <button type="submit" class="register-btn" [disabled]="form.invalid || loading">
+        <mat-spinner diameter="20" *ngIf="loading" class="spinner"></mat-spinner>
+        <span *ngIf="!loading">Créer mon compte</span>
+      </button>
+    </form>
+
+    <div class="footer-section">
+      <div class="copyright">
+        <p>All rights reserved SGI Technologies</p>
+      </div>
     </div>
   </div>
+
+  <!-- Right side - Illustration -->
+  <div class="illustration-side">
+    <div class="illustration-content">
+      <div class="plant-container">
+        <img src="assets/images/ilus.svg" alt="Illustration" class="illustration-image" />
+      </div>
+      <div class="content-overlay">
+        <h3>Système de Gestion des Incidents</h3>
+        <p>Une plateforme moderne et intuitive pour la gestion efficace des incidents techniques.</p>
+        <div class="illustration-logo">
+          <img src="assets/images/sgi-logo.png" alt="SGI Logo" class="illustration-logo-img" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Login link outside card -->
+<div class="login-link-section">
+  <a href="#" class="login-link-btn" (click)="openLogin()">Vous avez déjà un compte ? Se connecter</a>
+</div>
