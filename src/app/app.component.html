@@ -10,22 +10,10 @@
         <!-- Brand Section -->
         <div class="sidebar-brand" *ngIf="!isSidebarCollapsed">
           <div class="brand-content">
-            <img src="assets/images/sgi-logo.png" alt="SGI Logo" class="brand-logo" />
-            <div class="brand-text">
-              <h2 class="brand-title">SGI</h2>
-              <p class="brand-subtitle">Système de Gestion des Incidents</p>
-            </div>
-            <button mat-icon-button class="brand-collapse-btn" (click)="toggleSidebar()" [matTooltip]="'Réduire le menu'">
-              <mat-icon>chevron_left</mat-icon>
-            </button>
           </div>
         </div>
         
         <div class="sidebar-brand-collapsed" *ngIf="isSidebarCollapsed">
-          <img src="assets/images/sgi-logo.png" alt="SGI Logo" class="brand-logo-small" />
-          <button mat-icon-button class="brand-expand-btn" (click)="toggleSidebar()" [matTooltip]="'Développer le menu'">
-            <mat-icon>chevron_right</mat-icon>
-          </button>
         </div>
       
         <mat-nav-list>
@@ -120,6 +108,7 @@
           <button mat-icon-button aria-label="Toggle sidebar" (click)="toggleSidebar()" class="sidebar-toggle">
             <mat-icon>{{ isSidebarCollapsed ? 'chevron_right' : 'chevron_left' }}</mat-icon>
           </button>
+          <img src="assets/images/sgi-logo.png" alt="SGI Logo" class="header-logo" />
         </div>
         <div class="header-right">
           <button mat-icon-button [matMenuTriggerFor]="userMenu" class="profile-button">

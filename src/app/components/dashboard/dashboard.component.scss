@@ -180,6 +180,39 @@
   border: 1px solid rgba(239, 68, 68, 0.1);
 }
 
+.kpi-card.sla-alert {
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.kpi-card.sla-alert::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.kpi-card.productivity {
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.kpi-card.efficiency {
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
 .kpi-icon {
   display: flex;
   align-items: center;
@@ -231,12 +264,24 @@
 
 /* SLA Compliance Card Special Styling */
 .kpi-card.sla-compliance {
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  background: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.2);
 }
 
 .kpi-card.sla-compliance .kpi-icon {
-  background: #10b981;
+  background: #6f42c1;
+}
+
+.kpi-card.sla-compliance .kpi-content h3 {
+  color: #ffffff;
+}
+
+.kpi-card.sla-compliance .kpi-content p {
+  color: #ffffff;
+}
+
+.kpi-card.sla-compliance .kpi-content small {
+  color: #ffffff;
 }
 
 /* Charts Section */

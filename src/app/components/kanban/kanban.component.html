@@ -19,7 +19,15 @@
     </div>
   </div>
 
-  <div class="kanban-board" *ngIf="!loading; else loadingTemplate">
+  <div class="kanban-board-wrapper" *ngIf="!loading; else loadingTemplate">
+    <button class="scroll-arrow scroll-arrow-left" 
+            (click)="scrollLeft()" 
+            [disabled]="canScrollLeft"
+            mat-icon-button>
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+    
+    <div class="kanban-board" #kanbanBoard>
     <!-- Backlog -->
     <div class="kanban-column">
       <div class="column-header backlog">
@@ -219,6 +227,14 @@
         <button class="add-card" mat-stroked-button color="primary" (click)="createTicket()"><mat-icon>add</mat-icon> Ajouter</button>
       </div>
     </div>
+    </div>
+    
+    <button class="scroll-arrow scroll-arrow-right" 
+            (click)="scrollRight()" 
+            [disabled]="canScrollRight"
+            mat-icon-button>
+      <mat-icon>chevron_right</mat-icon>
+    </button>
   </div>
 
   <!-- Loading template -->
@@ -229,13 +245,5 @@
     </div>
   </ng-template>
 
-  <!-- Empty state -->
-  <div class="empty-state" *ngIf="!loading && incidents.length === 0">
-    <mat-icon>assignment</mat-icon>
-    <h3>Aucun incident trouvé</h3>
-    <p>Commencez par créer votre premier incident</p>
-    <button mat-raised-button color="primary" (click)="createTicket()">
-      Créer un incident
-    </button>
-  </div>
+
 </div>

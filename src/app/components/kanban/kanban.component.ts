@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { IncidentService } from '../../services/incident.service';
 import { Incident, StatutIncident, NiveauPriorite, STATUS_LABELS, PRIORITY_LABELS, STATUS_COLORS, PRIORITY_COLORS } from '../../models/incident.model';
@@ -14,7 +14,7 @@ import * as moment from 'moment';
   templateUrl: './kanban.component.html',
   styleUrls: ['./kanban.component.scss']
 })
-export class KanbanComponent implements OnInit {
+export class KanbanComponent implements OnInit, AfterViewInit {
   incidents: Incident[] = [];
   backlog: Incident[] = [];
   ouvert: Incident[] = [];
@@ -32,6 +32,10 @@ export class KanbanComponent implements OnInit {
   searchTerm = '';
 
   userIdToUser: { [id: number]: User } = {};
+  
+  @ViewChild('kanbanBoard', { static: false }) kanbanBoard!: ElementRef;
+  canScrollLeft = false;
+  canScrollRight = false;
 
   constructor(
     private incidentService: IncidentService,
@@ -42,6 +46,12 @@ export class KanbanComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadIncidents();
+  }
+
+  ngAfterViewInit(): void {
+    this.updateScrollButtons();
+    // Listen for window resize to update scroll buttons
+    window.addEventListener('resize', () => this.updateScrollButtons());
   }
 
   loadIncidents(): void {
@@ -241,5 +251,27 @@ export class KanbanComponent implements OnInit {
         this.categorizeIncidents();
       }
     });
+  }
+
+  scrollLeft(): void {
+    if (this.kanbanBoard) {
+      this.kanbanBoard.nativeElement.scrollBy({ left: -300, behavior: 'smooth' });
+      setTimeout(() => this.updateScrollButtons(), 300);
+    }
+  }
+
+  scrollRight(): void {
+    if (this.kanbanBoard) {
+      this.kanbanBoard.nativeElement.scrollBy({ left: 300, behavior: 'smooth' });
+      setTimeout(() => this.updateScrollButtons(), 300);
+    }
+  }
+
+  private updateScrollButtons(): void {
+    if (this.kanbanBoard) {
+      const element = this.kanbanBoard.nativeElement;
+      this.canScrollLeft = element.scrollLeft > 0;
+      this.canScrollRight = element.scrollLeft < (element.scrollWidth - element.clientWidth);
+    }
   }
 }

@@ -2,7 +2,8 @@
   <div class="surface">
   <div class="dashboard-header">
     <div class="title">
-       <h2>Tableau de bord</h2>
+       <h2>{{ getDashboardTitle() }}</h2>
+       <p class="dashboard-subtitle">{{ getDashboardSubtitle() }}</p>
     </div>
     <div class="header-actions">
       <button mat-stroked-button color="primary" (click)="refreshData()">
@@ -18,8 +19,8 @@
     <p>Chargement des données...</p>
   </div>
 
-  <!-- KPI Cards -->
-  <div class="kpi-grid" *ngIf="!loading">
+  <!-- Main Dashboard KPIs -->
+  <div class="kpi-grid" *ngIf="!loading && shouldShowMainKPIs()">
     <div class="kpi-card info">
       <div class="kpi-icon">
         <mat-icon>analytics</mat-icon>
@@ -82,26 +83,234 @@
     </div>
   </div>
 
+  <!-- SLA Dashboard KPIs -->
+  <div class="kpi-grid" *ngIf="!loading && shouldShowSLAKPIs()">
+    <!-- SLA Alert Status -->
+    <div class="kpi-card sla-alert" [style.backgroundColor]="getSLAAlertColor()">
+      <div class="kpi-icon">
+        <mat-icon>{{ getSLAAlertIcon() }}</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ getSLAAlertMessage() }}</h3>
+        <p>Statut SLA</p>
+        <small>{{ getSLAComplianceStatus() }} ({{ averageSLACompliance | number:'1.0-1' }}%)</small>
+      </div>
+    </div>
+
+    <!-- SLA Compliance Rate -->
+    <div class="kpi-card sla-compliance" [style.backgroundColor]="getComplianceColor(averageSLACompliance)">
+      <div class="kpi-icon">
+        <mat-icon>trending_up</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ averageSLACompliance | number:'1.0-1' }}%</h3>
+        <p>Conformité SLA Globale</p>
+        <small>{{ getComplianceLabel(getComplianceLevel(averageSLACompliance)) }}</small>
+      </div>
+    </div>
+
+    <!-- Incidents Within SLA -->
+    <div class="kpi-card success">
+      <div class="kpi-icon">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ incidentsWithinSLA }}</h3>
+        <p>Incidents Respectant SLA</p>
+        <small>Résolus en ≤ {{ slaTargetTime }}h</small>
+      </div>
+    </div>
+
+    <!-- SLA Violations -->
+    <div class="kpi-card overdue">
+      <div class="kpi-icon">
+        <mat-icon>warning</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ incidentsOverdue }}</h3>
+        <p>Violations SLA</p>
+        <small>Résolus en > {{ slaTargetTime }}h</small>
+      </div>
+    </div>
+
+    <!-- Average Resolution Time vs SLA Target -->
+    <div class="kpi-card info">
+      <div class="kpi-icon">
+        <mat-icon>schedule</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ averageResolutionTime | number:'1.1-1' }}h</h3>
+        <p>Temps de Résolution Moyen</p>
+        <small>vs {{ slaTargetTime }}h SLA</small>
+      </div>
+    </div>
+
+    <!-- SLA Target Time -->
+    <div class="kpi-card">
+      <div class="kpi-icon">
+        <mat-icon>timer</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ slaTargetTime }}h</h3>
+        <p>Objectif SLA</p>
+        <small>Temps de résolution cible</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Performance Dashboard KPIs -->
+  <div class="kpi-grid" *ngIf="!loading && shouldShowPerformanceKPIs()">
+    <!-- Productivity Score -->
+    <div class="kpi-card productivity" [style.backgroundColor]="getProductivityColor()">
+      <div class="kpi-icon">
+        <mat-icon>speed</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ productivityScore | number:'1.0-1' }}%</h3>
+        <p>Score de Productivité</p>
+        <small>{{ getProductivityLevel() }}</small>
+      </div>
+    </div>
+
+    <!-- Efficiency Trend -->
+    <div class="kpi-card efficiency" [style.backgroundColor]="getEfficiencyTrendColor()">
+      <div class="kpi-icon">
+        <mat-icon>{{ getEfficiencyTrendIcon() }}</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ getEfficiencyTrendMessage() }}</h3>
+        <p>Tendance d'Efficacité</p>
+        <small>{{ productivityScore | number:'1.0-1' }}% vs objectif</small>
+      </div>
+    </div>
+
+    <!-- Resolution Rate -->
+    <div class="kpi-card success">
+      <div class="kpi-icon">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ resolutionRate | number:'1.0-1' }}%</h3>
+        <p>Taux de Résolution</p>
+        <small>{{ resolvedIncidents }}/{{ totalIncidents }} incidents</small>
+      </div>
+    </div>
+
+    <!-- Response Time -->
+    <div class="kpi-card info">
+      <div class="kpi-icon">
+        <mat-icon>schedule</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ responseTime }}min</h3>
+        <p>Temps de Réponse Moyen</p>
+        <small>Première réponse</small>
+      </div>
+    </div>
+
+    <!-- Average Incidents Per Day -->
+    <div class="kpi-card warning">
+      <div class="kpi-icon">
+        <mat-icon>analytics</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ averageIncidentsPerDay | number:'1.1-1' }}</h3>
+        <p>Incidents/Jour</p>
+        <small>Moyenne 30 jours</small>
+      </div>
+    </div>
+
+    <!-- Peak Performance Hours -->
+    <div class="kpi-card">
+      <div class="kpi-icon">
+        <mat-icon>schedule</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ peakPerformanceHours }}</h3>
+        <p>Heures de Pic</p>
+        <small>Performance optimale</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Technicians Dashboard KPIs -->
+  <div class="kpi-grid" *ngIf="!loading && shouldShowTechnicianKPIs()">
+    <div class="kpi-card info">
+      <div class="kpi-icon">
+        <mat-icon>people</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ getAssignedIncidentsCount() }}</h3>
+        <p>Incidents Assignés</p>
+      </div>
+    </div>
+
+    <div class="kpi-card success">
+      <div class="kpi-icon">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ resolvedIncidents }}</h3>
+        <p>Incidents Résolus</p>
+      </div>
+    </div>
+
+    <div class="kpi-card warning">
+      <div class="kpi-icon">
+        <mat-icon>schedule</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ averageResolutionTime | number:'1.1-1' }}h</h3>
+        <p>Temps Moyen par Technicien</p>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon">
+        <mat-icon>trending_up</mat-icon>
+      </div>
+      <div class="kpi-content">
+        <h3>{{ slaComplianceRate | number:'1.0-1' }}%</h3>
+        <p>Performance Globale</p>
+      </div>
+    </div>
+  </div>
+
   <!-- Charts Section -->
   <div class="charts-section" *ngIf="!loading">
-    <div class="chart-container">
+    <!-- Technician Performance Chart -->
+    <div class="chart-container" *ngIf="shouldShowTechnicianChart()">
       <h3>Performance des Techniciens</h3>
       <canvas id="technicianChart"></canvas>
     </div>
 
-    <div class="chart-container">
-      <h3>Conformité SLA</h3>
+    <!-- SLA Compliance Chart -->
+    <div class="chart-container" *ngIf="shouldShowSLAChart()">
+      <h3>Conformité SLA par Type</h3>
       <canvas id="slaComplianceChart"></canvas>
     </div>
 
-    <div class="chart-container full-width">
+    <!-- SLA Trend Chart -->
+    <div class="chart-container full-width" *ngIf="shouldShowSLATrendChart()">
+      <h3>Évolution de la Conformité SLA (7 derniers jours)</h3>
+      <canvas id="slaTrendChart"></canvas>
+    </div>
+
+    <!-- Incident Trend Chart -->
+    <div class="chart-container full-width" *ngIf="shouldShowTrendChart()">
       <h3>Évolution des Incidents (7 derniers jours)</h3>
       <canvas id="incidentTrendChart"></canvas>
+    </div>
+
+    <!-- Performance Trend Chart -->
+    <div class="chart-container full-width" *ngIf="shouldShowPerformanceTrendChart()">
+      <h3>Évolution de la Productivité (7 derniers jours)</h3>
+      <canvas id="performanceTrendChart"></canvas>
     </div>
   </div>
 
   <!-- SLA Violations Table -->
-  <div class="violations-section" *ngIf="!loading && slaViolations.length > 0">
+  <div class="violations-section" *ngIf="!loading && shouldShowViolationsTable() && slaViolations.length > 0">
     <h3>Violations SLA Récentes</h3>
     <div class="table-container">
       <table mat-table [dataSource]="slaViolations" class="violations-table">

@@ -1,7 +1,7 @@
 <!-- Welcome title outside card -->
  
 
-<div class="login-container" *ngIf="!showRegister; else registerTpl">
+<div class="login-container">
   <!-- Left side - Login Form -->
   <div class="login-card">
     <div class="header-section">
@@ -57,7 +57,7 @@
 
     <div class="footer-section">
       <div class="copyright">
-        <p>All rights reserved SGI Technologies</p>
+        <p>All rights reserved DXC Technology - JAKAN EL YAZID</p>
       </div>
     </div>
   </div>
@@ -80,17 +80,6 @@
 </div>
 
 <!-- Create account button outside card -->
-<div class="create-account-section" *ngIf="!showRegister">
-  <a href="#" class="create-account-btn" (click)="openRegister()">Créer un nouveau compte</a>
+<div class="create-account-section">
+  <a class="create-account-btn" (click)="openRegister(); $event.preventDefault()">Créer un nouveau compte</a>
 </div>
-
-<ng-template #registerTpl>
-  <!-- Logo centered at top of page -->
-  <div class="page-logo-section">
-    <img src="assets/images/sgi-logo.png" alt="SGI Logo" class="page-logo" />
-  </div>
-  
-  <div class="register-container-embedded">
-    <app-register (back)="backToLogin()" [embedded]="true"></app-register>
-  </div>
-</ng-template>

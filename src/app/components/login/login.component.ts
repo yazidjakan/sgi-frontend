@@ -13,7 +13,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { RegisterComponent } from '../register/register.component';
+
 
 @Component({
   selector: 'app-login',
@@ -28,8 +28,7 @@ import { RegisterComponent } from '../register/register.component';
     MatButtonModule,
     MatIconModule,
     MatCardModule,
-    MatProgressSpinnerModule,
-    RegisterComponent
+    MatProgressSpinnerModule
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
@@ -39,7 +38,6 @@ export class LoginComponent implements OnInit {
   loading = false;
   hidePassword = true;
   returnUrl = '/dashboard';
-  showRegister = false;
 
   constructor(
     private fb: FormBuilder,
@@ -99,10 +97,8 @@ export class LoginComponent implements OnInit {
   }
 
   openRegister(): void {
-    this.showRegister = true;
+    this.router.navigate(['/register']);
   }
 
-  backToLogin(): void {
-    this.showRegister = false;
-  }
+
 }

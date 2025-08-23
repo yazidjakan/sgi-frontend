@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ReportService } from '../../services/report.service';
 import { 
   ReportRequest, 
@@ -36,7 +37,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
   constructor(
     private reportService: ReportService,
     private fb: FormBuilder,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private router: Router
   ) {
     this.reportForm = this.fb.group({
       templateName: ['', Validators.required],
@@ -325,5 +327,42 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.loadTemplates();
     this.loadReportHistory();
     this.toastr.info('Rapports actualisés');
+  }
+
+  goBack(): void {
+    this.router.navigate(['/dashboard']);
+  }
+
+  // Statistics methods
+  getCompletedReportsCount(): number {
+    return this.reportHistory.filter(report => report.status === 'COMPLETED').length;
+  }
+
+  getGeneratingReportsCount(): number {
+    return this.reportHistory.filter(report => report.status === 'GENERATING').length;
+  }
+
+  getFailedReportsCount(): number {
+    return this.reportHistory.filter(report => report.status === 'FAILED').length;
+  }
+
+  getSuccessRate(): number {
+    if (this.reportHistory.length === 0) return 0;
+    const completed = this.getCompletedReportsCount();
+    return Math.round((completed / this.reportHistory.length) * 100);
+  }
+
+  getPreferredFormat(): string {
+    if (this.reportHistory.length === 0) return 'Aucun';
+    
+    const formatCounts = this.reportHistory.reduce((acc, report) => {
+      acc[report.format] = (acc[report.format] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    const preferredFormat = Object.entries(formatCounts)
+      .sort(([,a], [,b]) => (b as number) - (a as number))[0];
+    
+    return preferredFormat ? getFormatLabel(preferredFormat[0] as ExportFormat) : 'Aucun';
   }
 }

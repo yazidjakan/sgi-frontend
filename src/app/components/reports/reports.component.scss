@@ -1,120 +1,307 @@
+// Variables
+$primary-color: #6f42c1;
+$accent-color: #2196f3;
+$success-color: #4caf50;
+$warning-color: #ff9800;
+$error-color: #f44336;
+$text-primary: #333;
+$text-secondary: #666;
+$text-muted: #999;
+$border-color: #e0e0e0;
+$background-light: #f8f9fa;
+$background-white: #ffffff;
+$shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+$shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
+$border-radius: 8px;
+$border-radius-small: 6px;
+
 .reports-container {
-  padding: 20px;
+  padding: 16px;
   max-width: 1200px;
   margin: 0 auto;
+  background: #f5f7fa;
+  min-height: 100vh;
 }
 
+// Header Section
 .reports-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 20px;
 
-  h2 {
-    margin: 0;
-    color: #333;
-    font-weight: 500;
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: $background-white;
+    padding: 16px 20px;
+    border-radius: $border-radius;
+    box-shadow: $shadow-light;
+    border: 1px solid $border-color;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 16px;
+      padding: 16px;
+    }
+  }
+
+  .header-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .back-button {
+      color: $primary-color;
+      background: rgba($primary-color, 0.1);
+      border-radius: 50%;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: rgba($primary-color, 0.2);
+        transform: scale(1.05);
+      }
+    }
+
+    .title-section {
+      h1 {
+        margin: 0;
+        color: $text-primary;
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 1.2;
+      }
+
+      .subtitle {
+        margin: 2px 0 0 0;
+        color: $text-secondary;
+        font-size: 14px;
+        font-weight: 400;
+      }
+    }
   }
 
   .header-actions {
     display: flex;
     gap: 8px;
     align-items: center;
+
+    @media (max-width: 768px) {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    button {
+      border-radius: $border-radius-small;
+      font-weight: 500;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: $shadow-medium;
+      }
+    }
   }
 }
 
+// Loading State
 .loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px;
-  color: #666;
+  padding: 40px 20px;
+  background: $background-white;
+  border-radius: $border-radius;
+  box-shadow: $shadow-light;
+  color: $text-secondary;
 
   p {
     margin-top: 16px;
-    font-size: 16px;
+    font-size: 14px;
+    font-weight: 500;
   }
 }
 
+// Main Content Grid
 .reports-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  gap: 20px;
 
-  @media (max-width: 1024px) {
+  @media (max-width: 1200px) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+// Report Cards
+.report-card {
+  background: $background-white;
+  border-radius: $border-radius;
+  box-shadow: $shadow-light;
+  border: 1px solid $border-color;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: $shadow-medium;
+    transform: translateY(-2px);
+  }
+
+  .card-header {
+    padding: 16px 20px;
+    background: $primary-color;
+    color: white;
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .title-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 1.2;
+      }
+    }
+  }
+
+  .card-content {
+    padding: 20px;
+  }
+}
+
+// Form Styling
+.form-section {
+  margin-bottom: 16px;
+
+  .form-label {
+    display: block;
+    margin-bottom: 6px;
+    color: $text-primary;
+    font-weight: 500;
+    font-size: 13px;
+  }
+
+  .full-width {
+    width: 100%;
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+
+  @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }
 }
 
-.report-form-card {
-  .template-option, .format-option {
+// Parameters Section
+.parameters-section {
+  margin-top: 20px;
+  padding: 16px;
+  background: $background-light;
+  border-radius: $border-radius-small;
+  border: 1px solid $border-color;
+
+  .section-header {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    margin-bottom: 16px;
 
     mat-icon {
+      color: $primary-color;
       font-size: 18px;
       width: 18px;
       height: 18px;
     }
-  }
 
-  .parameters-section {
-    margin-top: 24px;
-    padding: 16px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-
-    h4 {
-      margin: 0 0 16px 0;
-      color: #333;
-      font-weight: 500;
-    }
-  }
-
-  .form-row {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 16px;
-
-    @media (max-width: 768px) {
-      flex-direction: column;
-    }
-
-    .full-width {
-      flex: 1;
-    }
-  }
-
-  .form-actions {
-    display: flex;
-    gap: 12px;
-    margin-top: 24px;
-
-    @media (max-width: 768px) {
-      flex-direction: column;
+    h3 {
+      margin: 0;
+      color: $text-primary;
+      font-size: 14px;
+      font-weight: 600;
     }
   }
 }
 
+// Template and Format Options
+.template-option, .format-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 0;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  span {
+    font-weight: 500;
+  }
+}
+
+// Action Buttons
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+
+  .action-button {
+    flex: 1;
+    padding: 10px 20px;
+    border-radius: $border-radius-small;
+    font-weight: 500;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: $shadow-medium;
+    }
+
+    mat-icon {
+      margin-right: 6px;
+    }
+  }
+}
+
+// History Card Specific Styling
 .history-card {
   .history-list {
     .history-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px;
+      padding: 12px 16px;
       margin-bottom: 12px;
-      border-radius: 8px;
-      background-color: #fff;
-      border: 1px solid #e0e0e0;
+      border-radius: $border-radius-small;
+      background: $background-light;
+      border: 1px solid $border-color;
       transition: all 0.3s ease;
 
       &:hover {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        background: $background-white;
+        box-shadow: $shadow-light;
+        transform: translateX(2px);
+      }
+
+      &:last-child {
+        margin-bottom: 0;
       }
 
       .history-info {
@@ -124,26 +311,29 @@
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 8px;
+          margin-bottom: 6px;
 
           h4 {
             margin: 0;
-            font-size: 16px;
-            font-weight: 500;
-            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+            color: $text-primary;
           }
 
           .history-status {
             display: flex;
             align-items: center;
             gap: 4px;
-            font-size: 12px;
-            font-weight: 500;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 6px;
+            border-radius: 10px;
+            background: rgba($success-color, 0.1);
 
             mat-icon {
-              font-size: 16px;
-              width: 16px;
-              height: 16px;
+              font-size: 12px;
+              width: 12px;
+              height: 12px;
             }
           }
         }
@@ -153,7 +343,7 @@
           align-items: center;
           gap: 12px;
           font-size: 12px;
-          color: #666;
+          color: $text-secondary;
 
           .format-badge {
             display: flex;
@@ -163,7 +353,8 @@
             border-radius: 12px;
             color: white;
             font-size: 11px;
-            font-weight: 500;
+            font-weight: 600;
+            text-transform: uppercase;
 
             mat-icon {
               font-size: 12px;
@@ -174,13 +365,26 @@
 
           .date {
             font-style: italic;
+            color: $text-muted;
           }
         }
       }
 
       .history-actions {
         display: flex;
-        gap: 4px;
+        gap: 6px;
+
+        .action-icon {
+          color: $primary-color;
+          background: rgba($primary-color, 0.1);
+          border-radius: 50%;
+          transition: all 0.3s ease;
+
+          &:hover {
+            background: rgba($primary-color, 0.2);
+            transform: scale(1.05);
+          }
+        }
       }
     }
   }
@@ -190,82 +394,203 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 40px 20px;
+    padding: 40px 16px;
     text-align: center;
-    color: #666;
 
-    mat-icon {
-      font-size: 48px;
-      width: 48px;
-      height: 48px;
-      color: #ccc;
+    .empty-icon {
       margin-bottom: 16px;
+
+      mat-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+        color: $text-muted;
+        opacity: 0.5;
+      }
     }
 
-    h3 {
-      margin: 0 0 8px 0;
-      font-size: 18px;
-      font-weight: 500;
-      color: #333;
-    }
+    .empty-content {
+      h3 {
+        margin: 0 0 8px 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: $text-primary;
+      }
 
-    p {
-      margin: 0;
-      font-size: 14px;
-      color: #999;
+      p {
+        margin: 0;
+        font-size: 14px;
+        color: $text-secondary;
+        line-height: 1.4;
+      }
     }
   }
 }
 
-// Status colors
+// Status Colors
 .status-completed {
-  color: #4caf50;
+  color: $success-color;
+  background: rgba($success-color, 0.1);
 }
 
 .status-generating {
-  color: #ff9800;
+  color: $warning-color;
+  background: rgba($warning-color, 0.1);
 }
 
 .status-failed {
-  color: #f44336;
+  color: $error-color;
+  background: rgba($error-color, 0.1);
 }
 
 .status-cancelled {
-  color: #9e9e9e;
+  color: $text-muted;
+  background: rgba($text-muted, 0.1);
 }
 
-// Format colors
+// Format Colors
 .format-pdf {
-  background-color: #f44336;
+  background: #f44336;
 }
 
 .format-excel {
-  background-color: #4caf50;
+  background: #4caf50;
 }
 
 .format-html {
-  background-color: #2196f3;
+  background: #2196f3;
 }
 
-// Responsive design
-@media (max-width: 768px) {
-  .reports-container {
-    padding: 16px;
-  }
-
-  .reports-header {
-    flex-direction: column;
+// Statistics Card Styling
+.statistics-card {
+  .statistics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 16px;
-    align-items: flex-start;
+    margin-bottom: 20px;
 
-    .header-actions {
-      width: 100%;
-      justify-content: space-between;
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 12px;
     }
   }
 
-  .reports-content {
-    gap: 16px;
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: $background-light;
+    border-radius: $border-radius-small;
+    border: 1px solid $border-color;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: $background-white;
+      box-shadow: $shadow-light;
+      transform: translateY(-1px);
+    }
+
+    .stat-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: $primary-color;
+      border-radius: 50%;
+      color: white;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    .stat-info {
+      flex: 1;
+
+      h4 {
+        margin: 0 0 4px 0;
+        font-size: 12px;
+        font-weight: 600;
+        color: $text-primary;
+        line-height: 1.2;
+      }
+
+      .stat-value {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 700;
+        color: $primary-color;
+        line-height: 1;
+      }
+    }
+  }
+
+  .statistics-summary {
+    padding-top: 16px;
+    border-top: 1px solid $border-color;
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba($border-color, 0.5);
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .summary-label {
+        font-size: 13px;
+        color: $text-secondary;
+        font-weight: 500;
+      }
+
+      .summary-value {
+        font-size: 14px;
+        color: $text-primary;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .reports-container {
+    padding: 12px;
+  }
+
+  .reports-header {
+    .header-content {
+      padding: 12px;
+    }
+
+    .header-title {
+      .title-section {
+        h1 {
+          font-size: 20px;
+        }
+
+        .subtitle {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+
+  .report-card {
+    .card-header {
+      padding: 12px 16px;
+    }
+
+    .card-content {
+      padding: 16px;
+    }
   }
 
   .history-item {
@@ -279,13 +604,13 @@
       .history-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 8px;
+        gap: 6px;
       }
 
       .history-details {
         flex-direction: column;
         align-items: flex-start;
-        gap: 8px;
+        gap: 6px;
       }
     }
 
@@ -295,11 +620,11 @@
   }
 }
 
-// Animation for new reports
+// Animations
 @keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-10px);
   }
   to {
     opacity: 1;
@@ -307,8 +632,21 @@
   }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .history-item {
   animation: slideIn 0.3s ease-out;
+}
+
+.report-card {
+  animation: fadeIn 0.4s ease-out;
 }
 
 // Loading animation
@@ -326,4 +664,32 @@
 
 .generating {
   animation: pulse 1.5s infinite;
+}
+
+// Material Design Overrides
+::ng-deep {
+  .mat-form-field-appearance-outline {
+    .mat-form-field-outline {
+      color: $border-color;
+    }
+
+    &.mat-focused .mat-form-field-outline-thick {
+      color: $primary-color;
+    }
+  }
+
+  .mat-select-panel {
+    border-radius: $border-radius-small;
+    box-shadow: $shadow-medium;
+  }
+
+  .mat-option {
+    border-radius: $border-radius-small;
+    margin: 2px 6px;
+    
+    &.mat-selected {
+      background: rgba($primary-color, 0.1);
+      color: $primary-color;
+    }
+  }
 }

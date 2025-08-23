@@ -38,7 +38,7 @@
 
 .app-container.auth-route {
   height: 100vh;
-  background: linear-gradient(180deg, rgba(247,249,252,.2) 0%, rgba(238,242,247,.2) 100%), url('/assets/images/bg.svg');
+  background: linear-gradient(180deg, rgba(247,249,252,.2) 0%, rgba(238,242,247,.2) 100%);
   background-size: cover;
   background-position: center;
 }
@@ -100,6 +100,13 @@
 .header-left {
   display: flex;
   align-items: center;
+  gap: 16px;
+}
+
+.header-logo {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
 }
 
 .header-right {
@@ -157,6 +164,7 @@
 .brand-content {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   position: relative;
   z-index: 1;
@@ -235,12 +243,14 @@
 }
 
 .brand-logo-small {
-  width: 24px;
-  height: 24px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
   filter: brightness(0) invert(1);
   position: relative;
   z-index: 1;
+  margin: 0 auto;
+  display: block;
 }
 
 /* Brand expand button */
@@ -303,11 +313,30 @@ mat-nav-list a.emphasis:hover {
 }
 
 /* Icon-only mode */
-mat-nav-list a.icon-only span { display: none; }
+/* Hide only the title text when collapsed, not every span (preserves icon wrapper) */
+mat-nav-list a.icon-only span[matListItemTitle] { display: none; }
 mat-nav-list a.icon-only { 
   justify-content: center; 
+  align-items: center;
   gap: 0; 
   padding: 8px 4px;
+  min-height: 44px;
+  text-align: center;
+}
+/* Remove default start icon margin applied by Angular Material when in icon-only mode */
+mat-nav-list a.icon-only .mdc-list-item__start,
+mat-nav-list a.icon-only .mat-mdc-list-item-leading {
+  margin-right: 0 !important;
+}
+/* Ensure icons are perfectly centered in collapsed mode */
+mat-nav-list a.icon-only mat-icon {
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
 }
 mat-nav-list a mat-icon { 
   font-size: 18px; 
@@ -319,6 +348,9 @@ mat-nav-list a mat-icon {
   transition: all 0.3s ease;
   color: #64748b;
 }
+
+/* Utility: hide elements when requested in template */
+.hidden { display: none !important; }
 
 /* Sidebar label truncation for long titles */
 mat-nav-list a span[matListItemTitle] {
@@ -348,18 +380,19 @@ mat-nav-list a[routerLink="/tickets"] {
 }
 
 mat-nav-list a.active {
-  background: #6f42c1;
-  color: white;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(111, 66, 193, 0.3);
+  background: #FBEEFF;
+  color: #000000;
+  font-weight: 400;
+  box-shadow: 0 4px 12px rgba(251, 238, 255, 0.3);
 }
 
 mat-nav-list a.active mat-icon {
-  color: white;
+  color: #000000;
 }
 
 mat-nav-list a.active span {
-  font-weight: 700;
+  color: #000000;
+  font-weight: 400;
 }
 
 /* Enhanced dividers for better section separation */

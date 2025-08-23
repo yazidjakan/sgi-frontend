@@ -1,10 +1,30 @@
 .kanban-container {
   padding: 20px;
-  height: calc(100vh - 104px);
-  overflow: hidden;
-  background: linear-gradient(180deg, rgba(247,249,252,.2) 0%, rgba(238,242,247,.2) 100%), url('/assets/images/bg.svg');
+  min-height: calc(100vh - 104px);
+  background: linear-gradient(180deg, rgba(247,249,252,.2) 0%, rgba(238,242,247,.2) 100%);
   background-size: cover;
   background-position: center;
+  
+  /* Hide all scrollbars in the container */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+/* Hide scrollbars for WebKit browsers in container */
+.kanban-container::-webkit-scrollbar {
+  display: none;
+}
+
+.kanban-container::-webkit-scrollbar-track {
+  display: none;
+}
+
+.kanban-container::-webkit-scrollbar-thumb {
+  display: none;
+}
+
+.kanban-container::-webkit-scrollbar-corner {
+  display: none;
 }
 
 .kanban-header {
@@ -92,12 +112,83 @@
 .kanban-board {
   display: flex;
   gap: 20px;
-  height: calc(100% - 80px);
+  min-height: calc(100vh - 200px);
   overflow-x: auto;
   padding-bottom: 20px;
-  -webkit-overflow-scrolling: touch;
-  scroll-snap-type: x proximity;
   position: relative;
+  scroll-behavior: smooth;
+  
+  /* Hide scrollbars */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+/* Hide scrollbars for WebKit browsers */
+.kanban-board::-webkit-scrollbar {
+  display: none;
+}
+
+/* Additional scrollbar hiding for all browsers */
+.kanban-board::-webkit-scrollbar-track {
+  display: none;
+}
+
+.kanban-board::-webkit-scrollbar-thumb {
+  display: none;
+}
+
+.kanban-board::-webkit-scrollbar-corner {
+  display: none;
+}
+
+.kanban-board-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.scroll-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.scroll-arrow:hover {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.scroll-arrow:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  transform: translateY(-50%) scale(1);
+}
+
+.scroll-arrow-left {
+  left: 10px;
+}
+
+.scroll-arrow-right {
+  right: 10px;
+}
+
+.scroll-arrow mat-icon {
+  color: #666;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
 }
 
 .kanban-board::before {
@@ -180,44 +271,19 @@
 
 .column-content {
   flex: 1;
-  padding: 16px;
+  padding: 12px;
   overflow-y: auto;
-  min-height: 200px;
-  max-height: calc(100vh - 300px); /* Limit height to force scroll */
+  min-height: 120px;
+  max-height: calc(100vh - 350px); /* Shorter height to fit more content */
   
-  /* Custom scrollbar styling */
-  scrollbar-width: thin;
-  scrollbar-color: rgba(156, 163, 175, 0.4) transparent;
+  /* Hide scrollbars */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
 }
 
-/* Enhanced scrollbar styling for ticket columns */
+/* Hide scrollbars for WebKit browsers */
 .column-content::-webkit-scrollbar {
-  width: 10px;
-}
-
-.column-content::-webkit-scrollbar-track {
-  background: #f1f3f4;
-  border-radius: 6px;
-  margin: 8px 4px;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.column-content::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #d1d5db 0%, #9ca3af 100%);
-  border-radius: 6px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
-}
-
-.column-content::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #9ca3af 0%, #6b7280 100%);
-  transform: scaleX(1.2);
-}
-
-/* Firefox scrollbar */
-.column-content {
-  scrollbar-width: auto;
-  scrollbar-color: #9ca3af #f1f3f4;
+  display: none;
 }
 
 /* Smooth scroll behavior */
@@ -234,9 +300,9 @@
 
 .ticket-card {
   background: white;
-  border-radius: 12px;
-  padding: 12px;
-  margin-bottom: 12px;
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 8px;
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
   cursor: grab;
   transition: all 0.2s ease;
@@ -398,35 +464,7 @@
   font-size: 1rem;
 }
 
-/* Empty State */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 300px;
-  text-align: center;
-  color: #666;
-}
 
-.empty-state mat-icon {
-  font-size: 4rem;
-  width: 4rem;
-  height: 4rem;
-  color: #ccc;
-  margin-bottom: 16px;
-}
-
-.empty-state h3 {
-  margin: 0 0 8px 0;
-  color: #333;
-  font-size: 1.2rem;
-}
-
-.empty-state p {
-  margin: 0 0 20px 0;
-  font-size: 1rem;
-}
 
 /* Responsive Design */
 @media (max-width: 1200px) {
@@ -488,4 +526,26 @@
   .ticket-title { font-size: 1rem; }
   .ticket-meta { font-size: 0.9rem; }
   .add-card { width: 100%; min-height: 48px; font-size: 1rem; }
+}
+
+/* Global scrollbar hiding for the entire kanban component */
+:host {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+:host::-webkit-scrollbar {
+  display: none;
+}
+
+:host::-webkit-scrollbar-track {
+  display: none;
+}
+
+:host::-webkit-scrollbar-thumb {
+  display: none;
+}
+
+:host::-webkit-scrollbar-corner {
+  display: none;
 }

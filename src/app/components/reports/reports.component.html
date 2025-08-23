@@ -1,14 +1,25 @@
 <div class="reports-container">
   <div class="reports-header">
-    <h2>Génération de Rapports</h2>
-    <div class="header-actions">
-      <button mat-icon-button (click)="refreshReports()" matTooltip="Actualiser">
-        <mat-icon>refresh</mat-icon>
-      </button>
-      <button mat-raised-button color="accent" (click)="exportIncidentsForAI()" [disabled]="loading">
-        <mat-icon>download</mat-icon>
-        Export CSV pour IA
-      </button>
+    <div class="header-content">
+      <div class="header-title">
+        <button mat-icon-button class="back-button" (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="title-section">
+          <h1>Génération de Rapports</h1>
+          <p class="subtitle">Créez et gérez vos rapports d'analyse</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button mat-stroked-button color="primary" (click)="refreshReports()" matTooltip="Actualiser">
+          <mat-icon>refresh</mat-icon>
+          Actualiser
+        </button>
+        <button mat-raised-button color="accent" (click)="exportIncidentsForAI()" [disabled]="loading">
+          <mat-icon>cloud_download</mat-icon>
+          Export CSV pour IA
+        </button>
+      </div>
     </div>
   </div>
 
@@ -20,19 +31,21 @@
 
   <!-- Report Generation Form -->
   <div class="reports-content" *ngIf="!loading">
-    <mat-card class="report-form-card">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>assessment</mat-icon>
-          Nouveau Rapport
-        </mat-card-title>
-      </mat-card-header>
+    <!-- New Report Card -->
+    <div class="report-card new-report">
+      <div class="card-header">
+        <div class="card-title">
+          <mat-icon class="title-icon">assessment</mat-icon>
+          <h2>Nouveau Rapport</h2>
+        </div>
+      </div>
 
-      <mat-card-content>
+      <div class="card-content">
         <form [formGroup]="reportForm" (ngSubmit)="generateReport()">
-          <div class="form-row">
+          <!-- Report Template Selection -->
+          <div class="form-section">
+            <label class="form-label">Template de rapport*</label>
             <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Template de rapport</mat-label>
               <mat-select formControlName="templateName" (selectionChange)="onTemplateChange($event.value)">
                 <mat-option *ngFor="let template of templates" [value]="template.templateName">
                   <div class="template-option">
@@ -49,9 +62,10 @@
             </mat-form-field>
           </div>
 
-          <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>Format d'export</mat-label>
+          <!-- Export Format Selection -->
+          <div class="form-section">
+            <label class="form-label">Format d'export*</label>
+            <mat-form-field appearance="outline" class="full-width">
               <mat-select formControlName="format">
                 <mat-option *ngFor="let format of exportFormats" [value]="format">
                   <div class="format-option">
@@ -69,13 +83,16 @@
           </div>
 
           <!-- Dynamic Parameters -->
-          <div formGroupName="parameters" class="parameters-section">
-            <h4>Paramètres du rapport</h4>
+          <div formGroupName="parameters" class="parameters-section" *ngIf="selectedTemplate">
+            <div class="section-header">
+              <mat-icon>settings</mat-icon>
+              <h3>Paramètres du rapport</h3>
+            </div>
 
             <!-- Incident Report Parameters -->
-            <div class="form-row" *ngIf="selectedTemplate?.templateName === 'incident_report'">
+            <div class="form-section" *ngIf="selectedTemplate?.templateName === 'incident_report'">
+              <label class="form-label">ID de l'incident</label>
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>ID de l'incident</mat-label>
                 <input matInput formControlName="incidentId" type="number" placeholder="Ex: 123">
                 <mat-error *ngIf="reportForm.get('parameters.incidentId')?.hasError('required')">
                   ID de l'incident requis
@@ -84,32 +101,34 @@
             </div>
 
             <!-- SLA Report Parameters -->
-            <div class="form-row" *ngIf="selectedTemplate?.templateName === 'sla_report'">
-              <mat-form-field appearance="outline">
-                <mat-label>Type d'incident</mat-label>
-                <input matInput formControlName="incidentType" placeholder="Ex: Bug, Feature">
-                <mat-error *ngIf="reportForm.get('parameters.incidentType')?.hasError('required')">
-                  Type d'incident requis
-                </mat-error>
-              </mat-form-field>
+            <div class="form-section" *ngIf="selectedTemplate?.templateName === 'sla_report'">
+              <div class="form-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>Type d'incident</mat-label>
+                  <input matInput formControlName="incidentType" placeholder="Ex: Bug, Feature">
+                  <mat-error *ngIf="reportForm.get('parameters.incidentType')?.hasError('required')">
+                    Type d'incident requis
+                  </mat-error>
+                </mat-form-field>
 
-              <mat-form-field appearance="outline">
-                <mat-label>Période</mat-label>
-                <mat-select formControlName="timeRange">
-                  <mat-option value="LAST_WEEK">Semaine dernière</mat-option>
-                  <mat-option value="LAST_MONTH">Mois dernier</mat-option>
-                  <mat-option value="LAST_QUARTER">Trimestre dernier</mat-option>
-                  <mat-option value="LAST_YEAR">Année dernière</mat-option>
-                </mat-select>
-                <mat-error *ngIf="reportForm.get('parameters.timeRange')?.hasError('required')">
-                  Période requise
-                </mat-error>
-              </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Période</mat-label>
+                  <mat-select formControlName="timeRange">
+                    <mat-option value="LAST_WEEK">Semaine dernière</mat-option>
+                    <mat-option value="LAST_MONTH">Mois dernier</mat-option>
+                    <mat-option value="LAST_QUARTER">Trimestre dernier</mat-option>
+                    <mat-option value="LAST_YEAR">Année dernière</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="reportForm.get('parameters.timeRange')?.hasError('required')">
+                    Période requise
+                  </mat-error>
+                </mat-form-field>
+              </div>
             </div>
 
             <!-- Performance Report Parameters -->
-            <div class="form-row" *ngIf="selectedTemplate?.templateName === 'performance_report'">
-              <mat-form-field appearance="outline">
+            <div class="form-section" *ngIf="selectedTemplate?.templateName === 'performance_report'">
+              <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Période</mat-label>
                 <mat-select formControlName="period">
                   <mat-option *ngFor="let period of reportPeriods" [value]="period">
@@ -123,22 +142,24 @@
             </div>
 
             <!-- Analytics Report Parameters -->
-            <div class="form-row" *ngIf="selectedTemplate?.templateName === 'analytics_report'">
-              <mat-form-field appearance="outline">
-                <mat-label>Date de début</mat-label>
-                <input matInput formControlName="startDate" type="date">
-                <mat-error *ngIf="reportForm.get('parameters.startDate')?.hasError('required')">
-                  Date de début requise
-                </mat-error>
-              </mat-form-field>
+            <div class="form-section" *ngIf="selectedTemplate?.templateName === 'analytics_report'">
+              <div class="form-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>Date de début</mat-label>
+                  <input matInput formControlName="startDate" type="date">
+                  <mat-error *ngIf="reportForm.get('parameters.startDate')?.hasError('required')">
+                    Date de début requise
+                  </mat-error>
+                </mat-form-field>
 
-              <mat-form-field appearance="outline">
-                <mat-label>Date de fin</mat-label>
-                <input matInput formControlName="endDate" type="date">
-                <mat-error *ngIf="reportForm.get('parameters.endDate')?.hasError('required')">
-                  Date de fin requise
-                </mat-error>
-              </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Date de fin</mat-label>
+                  <input matInput formControlName="endDate" type="date">
+                  <mat-error *ngIf="reportForm.get('parameters.endDate')?.hasError('required')">
+                    Date de fin requise
+                  </mat-error>
+                </mat-form-field>
+              </div>
             </div>
           </div>
 
@@ -147,7 +168,8 @@
             <button mat-raised-button 
                     color="primary" 
                     type="submit" 
-                    [disabled]="reportForm.invalid || generating">
+                    [disabled]="reportForm.invalid || generating"
+                    class="action-button">
               <mat-icon>download</mat-icon>
               {{ generating ? 'Génération...' : 'Générer et télécharger' }}
             </button>
@@ -156,25 +178,26 @@
                     color="accent" 
                     type="button" 
                     (click)="generateAndOpenReport()"
-                    [disabled]="reportForm.invalid || generating">
+                    [disabled]="reportForm.invalid || generating"
+                    class="action-button">
               <mat-icon>open_in_new</mat-icon>
               {{ generating ? 'Génération...' : 'Générer et ouvrir' }}
             </button>
           </div>
         </form>
-      </mat-card-content>
-    </mat-card>
+      </div>
+    </div>
 
-    <!-- Report History -->
-    <mat-card class="history-card">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>history</mat-icon>
-          Historique des Rapports
-        </mat-card-title>
-      </mat-card-header>
+    <!-- Report History Card -->
+    <div class="report-card history-card">
+      <div class="card-header">
+        <div class="card-title">
+          <mat-icon class="title-icon">history</mat-icon>
+          <h2>Historique des Rapports</h2>
+        </div>
+      </div>
 
-      <mat-card-content>
+      <div class="card-content">
         <div class="history-list" *ngIf="reportHistory.length > 0; else emptyHistory">
           <div class="history-item" *ngFor="let report of reportHistory">
             <div class="history-info">
@@ -201,13 +224,15 @@
               <button mat-icon-button 
                       (click)="downloadReport(report.id)"
                       *ngIf="report.status === 'COMPLETED'"
-                      matTooltip="Télécharger">
+                      matTooltip="Télécharger"
+                      class="action-icon">
                 <mat-icon>download</mat-icon>
               </button>
               <button mat-icon-button 
                       (click)="cancelReport(report.id)"
                       *ngIf="report.status === 'GENERATING'"
-                      matTooltip="Annuler">
+                      matTooltip="Annuler"
+                      class="action-icon">
                 <mat-icon>cancel</mat-icon>
               </button>
             </div>
@@ -216,12 +241,16 @@
 
         <ng-template #emptyHistory>
           <div class="empty-history">
-            <mat-icon>history</mat-icon>
-            <h3>Aucun rapport généré</h3>
-            <p>Générez votre premier rapport pour voir l'historique</p>
+            <div class="empty-icon">
+              <mat-icon>schedule</mat-icon>
+            </div>
+            <div class="empty-content">
+              <h3>Aucun rapport généré</h3>
+              <p>Générez votre premier rapport pour voir l'historique</p>
+            </div>
           </div>
         </ng-template>
-      </mat-card-content>
-    </mat-card>
+      </div>
+    </div>
   </div>
 </div>

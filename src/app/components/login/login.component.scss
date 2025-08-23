@@ -1,7 +1,7 @@
 /* Import Lato font */
 @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
 
-/* Host component - full screen with transparent background */
+/* Host component - full screen */
 :host {
   display: flex;
   flex-direction: column;
@@ -10,9 +10,24 @@
   min-height: 100vh;
   max-height: 100vh;
   padding: 10px;
-  background: transparent;
   font-family: 'Lato', sans-serif;
   overflow: hidden;
+}
+
+/* Full page background */
+:host::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #faf8ff;
+  background-image: url('../../../assets/images/bg.svg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -1;
 }
 
 /* Welcome title outside card */
@@ -256,7 +271,7 @@
 /* Right side - Illustration */
 .illustration-side {
   flex: 1;
-  background: #f4eaff;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -1,15 +1,176 @@
-<div class="page-header">
-  <h2>Recherche</h2>
-  <mat-form-field appearance="outline" class="search">
-    <mat-label>Rechercher un ticket</mat-label>
-    <input matInput placeholder="#ID, titre, description...">
-    <mat-icon matSuffix>search</mat-icon>
-  </mat-form-field>
-</div>
+<div class="search-container">
+  <!-- Header Section -->
+  <div class="search-header">
+    <div class="header-content">
+      <h1 class="search-title">
+        <mat-icon class="title-icon">search</mat-icon>
+        Recherche Avancée
+      </h1>
+      <p class="search-subtitle">Trouvez rapidement vos tickets et incidents</p>
+    </div>
+  </div>
 
-<div class="empty">
-  <mat-icon>search</mat-icon>
-  <p>Utilisez la barre ci-dessus pour rechercher des incidents.</p>
+  <!-- Main Search Section -->
+  <div class="search-main">
+    <div class="search-card">
+      <!-- Primary Search Bar -->
+      <div class="primary-search">
+        <mat-form-field appearance="outline" class="main-search-field">
+          <mat-label>
+            <mat-icon class="search-label-icon">search</mat-icon>
+            Rechercher un ticket
+          </mat-label>
+          <input 
+            matInput 
+            placeholder="#ID, titre, description, assigné..."
+            class="search-input"
+            [(ngModel)]="searchQuery"
+            (input)="onSearchInput($event)"
+            (keyup.enter)="performSearch()">
+          <mat-icon matSuffix class="search-icon">search</mat-icon>
+          <button 
+            matSuffix 
+            mat-icon-button 
+            class="clear-button"
+            *ngIf="searchQuery"
+            (click)="clearSearch()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+        
+        <button 
+          mat-raised-button 
+          color="primary" 
+          class="search-button"
+          (click)="performSearch()"
+          [disabled]="!searchQuery">
+          <mat-icon>search</mat-icon>
+          Rechercher
+        </button>
+      </div>
+
+      <!-- Advanced Filters -->
+      <div class="advanced-filters" [class.expanded]="showAdvancedFilters">
+        <div class="filters-header">
+          <button 
+            mat-button 
+            class="toggle-filters-btn"
+            (click)="toggleAdvancedFilters()">
+            <mat-icon>{{ showAdvancedFilters ? 'expand_less' : 'expand_more' }}</mat-icon>
+            Filtres avancés
+          </button>
+        </div>
+        
+        <div class="filters-content" *ngIf="showAdvancedFilters">
+          <div class="filters-grid">
+            <mat-form-field appearance="outline" class="filter-field">
+              <mat-label>Statut</mat-label>
+              <mat-select [(ngModel)]="selectedStatus">
+                <mat-option value="">Tous les statuts</mat-option>
+                <mat-option value="OPEN">Ouvert</mat-option>
+                <mat-option value="IN_PROGRESS">En cours</mat-option>
+                <mat-option value="RESOLVED">Résolu</mat-option>
+                <mat-option value="CLOSED">Fermé</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="filter-field">
+              <mat-label>Priorité</mat-label>
+              <mat-select [(ngModel)]="selectedPriority">
+                <mat-option value="">Toutes les priorités</mat-option>
+                <mat-option value="LOW">Basse</mat-option>
+                <mat-option value="MEDIUM">Moyenne</mat-option>
+                <mat-option value="HIGH">Haute</mat-option>
+                <mat-option value="CRITICAL">Critique</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="filter-field">
+              <mat-label>Assigné à</mat-label>
+              <input matInput placeholder="Nom du technicien" [(ngModel)]="assignedTo">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="filter-field">
+              <mat-label>Date de création</mat-label>
+              <input matInput [matDatepicker]="datePicker" placeholder="Choisir une date" [(ngModel)]="createdDate">
+              <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+              <mat-datepicker #datePicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          
+          <div class="filters-actions">
+            <button mat-button (click)="clearFilters()">
+              <mat-icon>clear</mat-icon>
+              Effacer les filtres
+            </button>
+            <button mat-raised-button color="accent" (click)="applyFilters()">
+              <mat-icon>filter_list</mat-icon>
+              Appliquer les filtres
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Results Section -->
+  <div class="search-results" *ngIf="hasSearched">
+    <div class="results-header">
+      <h3>Résultats de recherche</h3>
+      <div class="results-count">
+        <mat-icon>list</mat-icon>
+        <span>{{ searchResults.length }} résultat(s) trouvé(s)</span>
+      </div>
+    </div>
+    
+    <div class="results-content" *ngIf="searchResults.length > 0; else noResults">
+      <!-- Results will be displayed here -->
+      <div class="result-item" *ngFor="let result of searchResults">
+        <mat-card class="result-card">
+          <mat-card-header>
+            <mat-card-title>Ticket #{{ result.id }}</mat-card-title>
+            <mat-card-subtitle>{{ result.title }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p>{{ result.description }}</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!hasSearched">
+    <div class="empty-content">
+      <div class="empty-icon">
+        <mat-icon>search</mat-icon>
+      </div>
+      <h3>Commencez votre recherche</h3>
+      <p>Utilisez la barre de recherche ci-dessus pour trouver des incidents, tickets ou utilisateurs.</p>
+      <div class="search-tips">
+        <h4>Conseils de recherche :</h4>
+        <ul>
+          <li>Recherchez par numéro de ticket (ex: #123)</li>
+          <li>Recherchez par titre ou description</li>
+          <li>Recherchez par nom d'assigné</li>
+          <li>Utilisez les filtres avancés pour affiner vos résultats</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Results State -->
+  <ng-template #noResults>
+    <div class="no-results">
+      <mat-icon>search_off</mat-icon>
+      <h3>Aucun résultat trouvé</h3>
+      <p>Aucun ticket ne correspond à votre recherche. Essayez de modifier vos critères.</p>
+      <button mat-button color="primary" (click)="clearSearch()">
+        <mat-icon>refresh</mat-icon>
+        Nouvelle recherche
+      </button>
+    </div>
+  </ng-template>
 </div>
 
 
